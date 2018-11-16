@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">PopularMoviesStage1</string>
+    <string name="sort_by_ratings">Sort by rating</string>
+    <string name="sort_by_Popularity">Sort by Popularity</string>
+    <string name="detailViewThumbnail_Description">Movie Thumbnail</string>
+    <string name="date">Release date:</string>
+    <string name="rating">Rating:</string>
+</resources>
+
