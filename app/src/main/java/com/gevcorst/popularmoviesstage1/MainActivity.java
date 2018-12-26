@@ -173,12 +173,14 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         switch (item.getItemId()) {
             // action with ID sortByRating was selected
             case R.id.sortByRating:
+                seUpViewModel();
                 movies.sort(Movie.movieRatingComparator);
                 setupAdapter(movies);
                 isAfavoriteList = false;
                 break;
             // action with ID sortByPopularity was selected
             case R.id.sortByPopularity:
+                seUpViewModel();
                 movies.sort(Movie.moviePopularityComparator);
                 setupAdapter(movies);
                 isAfavoriteList = false;
