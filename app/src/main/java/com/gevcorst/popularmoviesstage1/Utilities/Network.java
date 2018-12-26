@@ -11,9 +11,8 @@ import java.util.Scanner;
 
 public class Network {
     private final static String  BASED_URL_API = "http://api.themoviedb.org/3/movie/popular/";
-    private final static String MOVIE_STRING = "https://api.themoviedb.org/3/movie/{movie_id}?api_key=1dd6561c4403821b76cbf88ec92d820f&append_to_response=videos";
     private final static String REVIEWANDVIDEO_BASED_URL = "https://api.themoviedb.org/3/movie/";
-    private final static String APIKEY = "1dd6561c4403821b76cbf88ec92d820f";
+    private final static String APIKEY = "YOUR THEMOVIEDB.ORG KEY";
     private final static String APPEND_TO_RESPONSE_TRAILERS_PARAM = "videos";
     private final static String APPEND_TO_RESPONSE_REVIEWS_PARAM ="reviews";
 
