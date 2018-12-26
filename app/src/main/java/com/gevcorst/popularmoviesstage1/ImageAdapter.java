@@ -28,7 +28,6 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
     private String mImageString;
 
     public ImageAdapter(int numberOfItems, ListItemClickListener listener,List<Movie> list,Context mContext) {
-        int mNumberItems = numberOfItems;
         mOnClickListener = listener;
         viewHolderCount = 0;
        mMovieList = list;
@@ -108,13 +107,11 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
          * @param imageView The imageView which holds the movie's Thumbnail
          */
         void bind(Movie movie, ImageView imageView) {
-            StringBuilder mStringBuilder = new StringBuilder();
             String mImageUrl = "http://image.tmdb.org/t/p/";
-            mStringBuilder.append(mImageUrl);
-            String mImageSize = "w185/";
-            mStringBuilder.append(mImageSize);
-            mStringBuilder.append(movie.getThumbnail());
-            String completeImageUrl = mStringBuilder.toString();
+            String mImageSize = "w500/";
+            String completeImageUrl = mImageUrl +
+                    mImageSize +
+                    movie.getThumbnail();
             Picasso.get().load(completeImageUrl).into(imageView);
 
         }

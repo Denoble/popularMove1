@@ -1,18 +1,37 @@
 package com.gevcorst.popularmoviesstage1.Model;
 
+import android.arch.lifecycle.ViewModel;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
-public class Movie implements Parcelable {
+public class Movie extends ViewModel implements Parcelable {
     private String mOriginal_title;
     private int mId;
     private Double mUser_rating;
     private String mSynopsis;
     private String mImage_thumbnail;
     private Double mPopularity;
+      private String mDuration;
+    private List<String> mReviews;
+    private String mYoutubeURL;
+      private String mYoutubeURL2;
+
+    public String getYoutubeURL2() {
+        return mYoutubeURL2;
+    }
+
+    public void setYoutubeURL2(String mYoutubeURL2) {
+        this.mYoutubeURL2 = mYoutubeURL2;
+    }
+
+
+
+    // Constant for logging
+    private static final String TAG = Movie.class.getSimpleName();
 
     public String getSReleaseDate() {
         return mReleaseDate;
@@ -23,15 +42,20 @@ public class Movie implements Parcelable {
     }
 
     private String mReleaseDate;
-    public Movie(){}
+
+    public Movie() {
+    }
+
     private Movie(Parcel in) {
         mOriginal_title = in.readString();
         mId = in.readInt();
         mUser_rating = in.readDouble();
         mSynopsis = in.readString();
         mImage_thumbnail = in.readString();
-       mReleaseDate = in.readString();
-       mPopularity = in.readDouble();
+        mReleaseDate = in.readString();
+        mPopularity = in.readDouble();
+        //mDuration = in.readString();
+        
     }
 
     public String getOriginalTitle() {
@@ -67,11 +91,14 @@ public class Movie implements Parcelable {
     }
 
     public void setRelease_date(Date releaseDate) {
-        Date mRelease_date = releaseDate;
     }
 
     public void setMovieId(int id) {
         this.mId = id;
+    }
+
+    public int getMovieId() {
+        return this.mId;
     }
 
     private Double getPopularity() {
@@ -81,29 +108,40 @@ public class Movie implements Parcelable {
     public void setPopularity(Double mPopularity) {
         this.mPopularity = mPopularity;
     }
+    public String getDuration() {
+        return mDuration;
+    }
+
+    public void setDuration(String mDuration) {
+        this.mDuration = mDuration;
+    }
+
+    public String getYoutubeURL() {
+        return mYoutubeURL;
+    }
+
+    public void setYoutubeURL(String mYoutURL) {
+        this.mYoutubeURL = mYoutURL;
+    }
+    public void setReviews(List<String> reviews){
+        mReviews = reviews;
+    }
+    public List<String> getReviews(){
+        return mReviews;
+    }
 
     /*Comparator for sorting the Movie List by released date*/
-    public static final Comparator<Movie> moviePopularityComparator = new Comparator<Movie>() {
+    public static final Comparator<Movie> moviePopularityComparator = (movie1, movie2) -> {
 
-        public int compare(Movie movie1, Movie movie2) {
-
-            //Descending order
-            return movie2.getPopularity().compareTo(movie1.getPopularity());
-
-
-        }
+        //Descending order
+        return movie2.getPopularity().compareTo(movie1.getPopularity());
 
 
     };
     /*Comparator for sorting the Movie List by Rating*/
-    public static final Comparator<Movie> movieRatingComparator = new Comparator<Movie>() {
-
-        public int compare(Movie movie1, Movie movie2) {
-            //Descending order
-            return movie2.getUserRating().compareTo(movie1.getUserRating());
-
-
-        }
+    public static final Comparator<Movie> movieRatingComparator = (movie1, movie2) -> {
+        //Descending order
+        return movie2.getUserRating().compareTo(movie1.getUserRating());
 
 
     };
@@ -126,15 +164,16 @@ public class Movie implements Parcelable {
 
 
     }
-    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>()
-    {
-        public Movie createFromParcel(Parcel in)
-        {
+
+    public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
+        public Movie createFromParcel(Parcel in) {
             return new Movie(in);
         }
-        public Movie[] newArray(int size)
-        {
+
+        public Movie[] newArray(int size) {
             return new Movie[size];
         }
     };
+
+
 }

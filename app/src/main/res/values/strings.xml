@@ -1,9 +1,14 @@
 <resources>
-    <string name="app_name">PopularMoviesStage1</string>
+    <string name="app_name">Gevcorst Popular Movies in Theaters</string>
     <string name="sort_by_ratings">Sort by rating</string>
     <string name="sort_by_Popularity">Sort by Popularity</string>
     <string name="detailViewThumbnail_Description">Movie Thumbnail</string>
     <string name="date">Release date:</string>
     <string name="rating">Rating:</string>
+    <string name="duration">Duration:</string>
+    <string name="favorite">MARK AS FAVORITE:</string>
+    <string name="sort_by_Favorite">Sort by Favorite</string>
+    <string name="trailers">Trailers:</string>
+    <string name="reviews">Reviews</string>
 </resources>
 

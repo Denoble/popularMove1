@@ -11,7 +11,12 @@ import java.util.Scanner;
 
 public class Network {
     private final static String  BASED_URL_API = "http://api.themoviedb.org/3/movie/popular/";
-    private final static String APIKEY = "YOUR_APIKEY";
+    private final static String MOVIE_STRING = "https://api.themoviedb.org/3/movie/{movie_id}?api_key=1dd6561c4403821b76cbf88ec92d820f&append_to_response=videos";
+    private final static String REVIEWANDVIDEO_BASED_URL = "https://api.themoviedb.org/3/movie/";
+    private final static String APIKEY = "1dd6561c4403821b76cbf88ec92d820f";
+    private final static String APPEND_TO_RESPONSE_TRAILERS_PARAM = "videos";
+    private final static String APPEND_TO_RESPONSE_REVIEWS_PARAM ="reviews";
+
 
     /**
      * Builds the URL used to query Popular Movie API.
@@ -19,6 +24,48 @@ public class Network {
     public static URL buildUrl(){
         Uri builtUri = Uri.parse(BASED_URL_API).buildUpon()
                 .appendQueryParameter("api_key",APIKEY)
+                .build();
+        URL url = null;
+        try{
+            url = new URL(builtUri.toString());
+        }
+        catch(MalformedURLException e){
+            e.printStackTrace();
+        }
+        return  url;
+    }
+
+    /**
+     * Query themoviedb.org RESTFUL API for Movie
+     * Trailer and duration
+     * @return URL
+     */
+    public static URL buildMovieUrl(String movieId){
+        Uri builtUri = Uri.parse(REVIEWANDVIDEO_BASED_URL).buildUpon()
+                .appendPath(movieId)
+                .appendPath(APPEND_TO_RESPONSE_TRAILERS_PARAM)
+                .appendQueryParameter("api_key",APIKEY)
+                .build();
+        URL url = null;
+        try{
+            url = new URL(builtUri.toString());
+        }
+        catch(MalformedURLException e){
+            e.printStackTrace();
+        }
+        return  url;
+    }
+
+    /**
+     * Query themoviedb.org for a movie reviews
+     * @return URL
+     */
+    public static URL buildReviewsUrl(String movieId){
+        Uri builtUri = Uri.parse(REVIEWANDVIDEO_BASED_URL).buildUpon()
+                .appendPath(movieId)
+                .appendPath(APPEND_TO_RESPONSE_REVIEWS_PARAM)
+                .appendQueryParameter("api_key",APIKEY)
+
                 .build();
         URL url = null;
         try{
