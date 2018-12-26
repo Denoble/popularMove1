@@ -10,6 +10,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -41,10 +42,12 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
 
     private RecyclerView mImageList;
     private ArrayList<Movie> movies;
-    private List<Movie>favoritesMovies;
+    private List<Movie> favoritesMovies;
     private List<UsersFavorite> mFavoriteMovies;
     private final String LOG_MASSAGE = this.getClass().getSimpleName();
     private MovieViewModel movieViewModel;
+    private boolean isAfavoriteList;
+    private final String ISAFAVORITELISTSTATEKEY = "isAFovriteKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +63,13 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         UserFavoriteDataBase userFavoriteDataBase = UserFavoriteDataBase.getInstance(getApplicationContext());
         movieViewModel =
                 ViewModelProviders.of(this).get(MovieViewModel.class);
-        if(movies == null){
-            seUpViewModel();
+        seUpViewModel();
+        if(savedInstanceState != null){
+            isAfavoriteList = savedInstanceState.getBoolean(ISAFAVORITELISTSTATEKEY);
+            if(isAfavoriteList){
+                setUpFavoriteMovieViewModel();
+            }
         }
-
 
     }
 
@@ -108,14 +114,14 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return (activeNetwork != null && activeNetwork.isConnected());
     }
-    private void seUpViewModel(){
-        if(movies == null && !isNetworkAvailable()){
+
+    private void seUpViewModel() {
+        if (movies == null && !isNetworkAvailable()) {
             Toast toast =
                     Toast.makeText(getApplicationContext(),
                             "No INTERNET connection!", Toast.LENGTH_LONG);
             toast.show();
-        }
-        else{
+        } else {
             movieViewModel.getMovieList().observe(this, latestMovies -> {
                 movies = (ArrayList<Movie>) latestMovies;
                 setupAdapter(movies);
@@ -124,11 +130,12 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         }
 
     }
-    private void setUpFavoriteMovieViewModel(){
+
+    private void setUpFavoriteMovieViewModel() {
         movieViewModel.getFavoriteList().observe(this, usersFavorites -> {
-           favoritesMovies =  new ArrayList<>();
-            for (int i = 0; i <  usersFavorites.size(); i++) {
-                String  movieTitle = usersFavorites.get(i).getMoveTitle();
+            favoritesMovies = new ArrayList<>();
+            for (int i = 0; i < usersFavorites.size(); i++) {
+                String movieTitle = usersFavorites.get(i).getMoveTitle();
                 movies.stream()
                         .filter(m -> m.getOriginalTitle().equals(movieTitle)).findAny().ifPresent(favMovie -> favoritesMovies.add(favMovie));
 
@@ -168,16 +175,18 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
             case R.id.sortByRating:
                 movies.sort(Movie.movieRatingComparator);
                 setupAdapter(movies);
+                isAfavoriteList = false;
                 break;
             // action with ID sortByPopularity was selected
             case R.id.sortByPopularity:
                 movies.sort(Movie.moviePopularityComparator);
                 setupAdapter(movies);
+                isAfavoriteList = false;
                 break;
             // action with ID sortByPopularity was selected
             case R.id.sortByFavorite:
                 setUpFavoriteMovieViewModel();
-
+                isAfavoriteList = true;
                 break;
             default:
                 break;
@@ -190,6 +199,7 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        outState.putBoolean(ISAFAVORITELISTSTATEKEY,isAfavoriteList);
     }
 
 }

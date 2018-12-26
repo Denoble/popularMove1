@@ -12,7 +12,7 @@ import java.util.Scanner;
 public class Network {
     private final static String  BASED_URL_API = "http://api.themoviedb.org/3/movie/popular/";
     private final static String REVIEWANDVIDEO_BASED_URL = "https://api.themoviedb.org/3/movie/";
-    private final static String APIKEY = "YOUR THEMOVIEDB.ORG KEY";
+    private final static String APIKEY = "YOUR themoviedb.org APIKEY";
     private final static String APPEND_TO_RESPONSE_TRAILERS_PARAM = "videos";
     private final static String APPEND_TO_RESPONSE_REVIEWS_PARAM ="reviews";
 
