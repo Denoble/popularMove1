@@ -42,12 +42,13 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
 
     private RecyclerView mImageList;
     private ArrayList<Movie> movies;
+    private ArrayList<Movie> topRateMovies;
     private List<Movie> favoritesMovies;
     private List<UsersFavorite> mFavoriteMovies;
     private final String LOG_MASSAGE = this.getClass().getSimpleName();
     private MovieViewModel movieViewModel;
-    private boolean isAfavoriteList;
-    private final String ISAFAVORITELISTSTATEKEY = "isAFovriteKey";
+    private boolean isAfavoriteList,getTopRatedMovies;
+    private final String BOOLEAN_INSTANCE_STATE_KEY = "isAFovriteKey";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,13 +64,30 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         UserFavoriteDataBase userFavoriteDataBase = UserFavoriteDataBase.getInstance(getApplicationContext());
         movieViewModel =
                 ViewModelProviders.of(this).get(MovieViewModel.class);
-        seUpViewModel();
-        if(savedInstanceState != null){
-            isAfavoriteList = savedInstanceState.getBoolean(ISAFAVORITELISTSTATEKEY);
-            if(isAfavoriteList){
+
+
+       if(savedInstanceState != null){
+            boolean [] instanceStateBoolean = savedInstanceState.getBooleanArray(BOOLEAN_INSTANCE_STATE_KEY);
+            isAfavoriteList = instanceStateBoolean[0];
+            getTopRatedMovies = instanceStateBoolean[1];
+            if(isAfavoriteList && getTopRatedMovies){
+                setUpTopRatedViewModel();
                 setUpFavoriteMovieViewModel();
             }
+            if(isAfavoriteList && !getTopRatedMovies){
+               setUpViewModel();
+                setUpFavoriteMovieViewModel();
+            }
+            if(getTopRatedMovies && !isAfavoriteList){
+                setUpTopRatedViewModel();
+            }
+            if(!isAfavoriteList && !getTopRatedMovies){
+                setUpViewModel();
+            }
         }
+        else{
+           setUpViewModel();
+       }
 
     }
 
@@ -115,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         return (activeNetwork != null && activeNetwork.isConnected());
     }
 
-    private void seUpViewModel() {
+    private void setUpViewModel() {
         if (movies == null && !isNetworkAvailable()) {
             Toast toast =
                     Toast.makeText(getApplicationContext(),
@@ -123,6 +141,21 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
             toast.show();
         } else {
             movieViewModel.getMovieList().observe(this, latestMovies -> {
+                movies = (ArrayList<Movie>) latestMovies;
+                setupAdapter(movies);
+            });
+
+        }
+
+    }
+    private void setUpTopRatedViewModel() {
+        if (movies == null && !isNetworkAvailable()) {
+            Toast toast =
+                    Toast.makeText(getApplicationContext(),
+                            "No INTERNET connection!", Toast.LENGTH_LONG);
+            toast.show();
+        } else {
+            movieViewModel.getTopRatedMovieList().observe(this, latestMovies -> {
                 movies = (ArrayList<Movie>) latestMovies;
                 setupAdapter(movies);
             });
@@ -173,22 +206,26 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         switch (item.getItemId()) {
             // action with ID sortByRating was selected
             case R.id.sortByRating:
-                seUpViewModel();
-                movies.sort(Movie.movieRatingComparator);
-                setupAdapter(movies);
+                getTopRatedMovies = true;
                 isAfavoriteList = false;
+                setUpTopRatedViewModel();
+                //movies.sort(Movie.movieRatingComparator);
+                setupAdapter(movies);
+
                 break;
             // action with ID sortByPopularity was selected
             case R.id.sortByPopularity:
-                seUpViewModel();
-                movies.sort(Movie.moviePopularityComparator);
-                setupAdapter(movies);
+                getTopRatedMovies = false;
                 isAfavoriteList = false;
+                setUpViewModel();
+               // movies.sort(Movie.moviePopularityComparator);
+                setupAdapter(movies);
+
                 break;
             // action with ID sortByPopularity was selected
             case R.id.sortByFavorite:
-                setUpFavoriteMovieViewModel();
                 isAfavoriteList = true;
+                setUpFavoriteMovieViewModel();
                 break;
             default:
                 break;
@@ -200,8 +237,10 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-
-        outState.putBoolean(ISAFAVORITELISTSTATEKEY,isAfavoriteList);
+        boolean[] bools =  new boolean[2];
+        bools[0] = isAfavoriteList;
+        bools[1] = getTopRatedMovies;
+        outState.putBooleanArray(BOOLEAN_INSTANCE_STATE_KEY,bools);
     }
 
 }

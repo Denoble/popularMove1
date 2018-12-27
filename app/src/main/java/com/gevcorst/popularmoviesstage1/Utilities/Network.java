@@ -11,6 +11,7 @@ import java.util.Scanner;
 
 public class Network {
     private final static String  BASED_URL_API = "http://api.themoviedb.org/3/movie/popular/";
+    private final static String  TOP_RATED_URL_API = "http://api.themoviedb.org/3/movie/top_rated/";
     private final static String REVIEWANDVIDEO_BASED_URL = "https://api.themoviedb.org/3/movie/";
     private final static String APIKEY = "YOUR themoviedb.org APIKEY";
     private final static String APPEND_TO_RESPONSE_TRAILERS_PARAM = "videos";
@@ -22,6 +23,19 @@ public class Network {
      */
     public static URL buildUrl(){
         Uri builtUri = Uri.parse(BASED_URL_API).buildUpon()
+                .appendQueryParameter("api_key",APIKEY)
+                .build();
+        URL url = null;
+        try{
+            url = new URL(builtUri.toString());
+        }
+        catch(MalformedURLException e){
+            e.printStackTrace();
+        }
+        return  url;
+    }
+    public static URL buildTopRatedUrl(){
+        Uri builtUri = Uri.parse(TOP_RATED_URL_API).buildUpon()
                 .appendQueryParameter("api_key",APIKEY)
                 .build();
         URL url = null;

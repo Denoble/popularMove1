@@ -25,6 +25,7 @@ import java.util.List;
 
 public class MovieViewModel extends AndroidViewModel {
     private static MutableLiveData<List<Movie>> movieList;
+    private static MutableLiveData<List<Movie>> topRatedMovieList;
     private final LiveData<List<UsersFavorite>> favoriteList;
     private static MutableLiveData<Movie> movie_WithTrailer,movie_WithReview;
     private static final String TAG = MovieViewModel.class.getSimpleName();
@@ -121,6 +122,40 @@ public class MovieViewModel extends AndroidViewModel {
         }.execute();
     }
 
+    public MutableLiveData<List<Movie>> getTopRatedMovieList() {
+        if (topRatedMovieList == null) {
+            topRatedMovieList = new MutableLiveData<>();
+            loadTopRatedData();
+
+        }
+        return topRatedMovieList;
+    }
+    private static  void loadTopRatedData() {
+        new AsyncTask<Void, Void, List<Movie>>() {
+
+
+            @Override
+            protected List<Movie> doInBackground(Void... voids) {
+                List<Movie> movies = new ArrayList<>();
+                URL url = Network.buildTopRatedUrl();
+                try {
+                    String popularMovieResults = Network.getResponseFromHttpUrl(url);
+                    movies = JsonUtil.parsePopularMovieJson(popularMovieResults);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return movies;
+            }
+
+            @Override
+            protected void onPostExecute(List<Movie> movies) {
+                super.onPostExecute(movies);
+                topRatedMovieList.setValue(movies);
+            }
+
+        }.execute();
+    }
     public MutableLiveData<List<Movie>> getMovieList() {
         if (movieList == null) {
             movieList = new MutableLiveData<>();
@@ -129,7 +164,6 @@ public class MovieViewModel extends AndroidViewModel {
         }
         return movieList;
     }
-
     private static  void loadData() {
         new AsyncTask<Void, Void, List<Movie>>() {
 
