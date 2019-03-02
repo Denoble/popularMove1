@@ -16,22 +16,19 @@ public abstract class UserFavoriteDataBase extends RoomDatabase {
 
 
     /**
+     *
      * @param context
-     * @return
-     * Creates an instance of the UserFavoriteDataBase
-     * * if it does not exsist using singleton design pattern
+     * @return An instance of SQLITE DATABASE
      */
     public static  UserFavoriteDataBase getInstance(Context context){
         if(userFavoriteDataBaseInstance == null){
             synchronized (LOCK){
-                Log.d(LOG_TAG,"Creating user's new Database");
                 userFavoriteDataBaseInstance = Room.databaseBuilder(context.getApplicationContext(),
                         UserFavoriteDataBase.class, UserFavoriteDataBase.databaseName)
                         //.allowMainThreadQueries()
                         .build();
             }
         }
-        Log.d(LOG_TAG,"Getting the instance of the Database");
         return userFavoriteDataBaseInstance;
     }
     public abstract FavoriteDao favoriteDao();

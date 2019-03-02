@@ -4,13 +4,9 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.view.View;
 
 
 import com.gevcorst.popularmoviesstage1.Database.UserFavoriteDataBase;
@@ -23,7 +19,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MovieViewModel extends AndroidViewModel {
+public class    MovieViewModel extends AndroidViewModel {
     private static MutableLiveData<List<Movie>> movieList;
     private static MutableLiveData<List<Movie>> topRatedMovieList;
     private final LiveData<List<UsersFavorite>> favoriteList;
@@ -33,7 +29,6 @@ public class MovieViewModel extends AndroidViewModel {
     public MovieViewModel(@NonNull Application application) {
         super(application);
         UserFavoriteDataBase database = UserFavoriteDataBase.getInstance(this.getApplication());
-        Log.d(TAG, "Actively retrieving the tasks from the DataBase");
         favoriteList = database.favoriteDao().loadAllTasks();
 
     }
@@ -56,7 +51,6 @@ public class MovieViewModel extends AndroidViewModel {
                 URL url = Network.buildMovieUrl(movieId);
                 try {
                     String movieTrailerString = Network.getResponseFromHttpUrl(url);
-                    Log.d("MY VIDEO URL", movieTrailerString);
                     movieWithTrailer = JsonUtil.parseMovieTrailer(movieTrailerString, movieWithTrailer);
 
 
@@ -65,11 +59,6 @@ public class MovieViewModel extends AndroidViewModel {
                 }
                 return movieWithTrailer;
 
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
             }
 
             @Override
@@ -96,7 +85,6 @@ public class MovieViewModel extends AndroidViewModel {
             protected Movie doInBackground(Void... voids) {
                 String movieId = String.valueOf(movieWithReviews.getMovieId());
                 URL url = Network.buildReviewsUrl(movieId);
-                Log.d("DE REVIEW URL", url.toString());
                 try {
                     String movieReviewString = Network.getResponseFromHttpUrl(url);
 
@@ -107,11 +95,6 @@ public class MovieViewModel extends AndroidViewModel {
                 }
                 return movieWithReviews;
 
-            }
-
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
             }
 
             @Override

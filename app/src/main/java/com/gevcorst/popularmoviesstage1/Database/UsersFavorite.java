@@ -4,10 +4,6 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.gevcorst.popularmoviesstage1.Model.Movie;
-
-import java.util.List;
-
 @Entity(tableName = "favorite")
 public class UsersFavorite {
     @PrimaryKey(autoGenerate = true)

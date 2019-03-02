@@ -1,6 +1,5 @@
 package com.gevcorst.popularmoviesstage1;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -8,8 +7,8 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DetailActivity extends AppCompatActivity {
     private ImageView mImageView;
@@ -33,11 +33,12 @@ public class DetailActivity extends AppCompatActivity {
     private TextView mSynopsisTextView;
     private TextView mRatingTextView;
     private TextView mTitleTextView;
-    private TextView mDuration,favoriteTextView,forDuration;
+    private TextView mDuration;
+    private TextView favoriteTextView;
     private Movie movie;
     private Button playTrailer1,playTrailer2,favoriteButton;
     private UserFavoriteDataBase mFavoriteMovies;
-    private RecyclerView mReviewList;
+    private TextView mReviewList;
     private MovieViewModel movieViewModel;
     private List<String> mReviews;
     private boolean isAFavorite;
@@ -67,22 +68,14 @@ public class DetailActivity extends AppCompatActivity {
         favoriteButton = findViewById(R.id.favoriteButton);
         mSynopsisTextView = findViewById(R.id.tv_synopsis);
         mDuration = findViewById(R.id.tv_duration);
-        forDuration = findViewById(R.id.tv_forDuration);
+        TextView forDuration = findViewById(R.id.tv_forDuration);
         playTrailer1 = findViewById(R.id.videoView);
         playTrailer2 = findViewById(R.id.videoView2);
         mReviewList = findViewById(R.id.recyclerView);
-        LinearLayoutManager mlayoutManager = new LinearLayoutManager(this);
-        mlayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mReviewList.setLayoutManager(mlayoutManager);
-        mReviewList.setHasFixedSize(true);
         forDuration.setVisibility(View.GONE);
         mDuration.setVisibility(View.GONE);
     }
-    private void setupAdapter(List<String> reviews) {
-        ReviewAdapter mAdapter = new ReviewAdapter(reviews.size(),reviews, getApplicationContext());
 
-        mReviewList.setAdapter(mAdapter);
-    }
 
     /**
      * Sets Data to the DetailActivity views
@@ -104,7 +97,7 @@ public class DetailActivity extends AppCompatActivity {
         Picasso.get().load(completeImageUrl).into(mImageView);
         mTitleTextView.setText(movie.getOriginalTitle());
         mDateTextView.setText(movie.getSReleaseDate());
-        mRatingTextView.setText(movie.getUserRating().toString());
+        mRatingTextView.setText(String.format(Locale.getDefault(), movie.getUserRating().toString()));
         mSynopsisTextView.setText(movie.getSynopsis());
         setUpMovieTrailer();
         setMovieReviews();
@@ -115,36 +108,34 @@ public class DetailActivity extends AppCompatActivity {
     private void setUpMovieTrailer(){
         movieViewModel.getMovieTrailers(movie).observe(this, movie -> {
             mDuration.setText(movie.getDuration());
-            playTrailer1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                  String   youtubeUrl = movie.getYoutubeURL();
-                   playTrailer(playTrailer1,youtubeUrl);
-                }
+            playTrailer1.setOnClickListener(view -> {
+              String   youtubeUrl = movie.getYoutubeURL();
+               playTrailer(playTrailer1,youtubeUrl);
             });
-            playTrailer2.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    String   youtubeUrl = movie.getYoutubeURL2();
-                    if(youtubeUrl == null){
-                        playTrailer2.setVisibility(View.GONE);
-                        Toast toast = Toast.makeText(getApplicationContext(),"No trailer link available", Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                    else{
-                        playTrailer(playTrailer2,youtubeUrl);
-                    }
-
+            playTrailer2.setOnClickListener(view -> {
+                String   youtubeUrl = movie.getYoutubeURL2();
+                if(youtubeUrl == null){
+                    playTrailer2.setVisibility(View.GONE);
+                    Toast toast = Toast.makeText(getApplicationContext(),"No trailer link available", Toast.LENGTH_LONG);
+                    toast.show();
                 }
+                else{
+                    playTrailer(playTrailer2,youtubeUrl);
+                }
+
             });
         });
     }
     private void setMovieReviews(){
         movieViewModel.getMovieReviews(movie).observe(this, movie -> {
             mReviews = movie.getReviews();
-                setupAdapter(mReviews);
-
-
+            StringBuilder sb = new StringBuilder();
+            for(String s:mReviews){
+                sb.append(s);
+                sb.append("\n\n");
+            }
+            mReviewList.setText(sb.toString());
+            mReviewList.setMovementMethod(new ScrollingMovementMethod());
         });
     }
     private void monitorFavoriteInDataBase(){

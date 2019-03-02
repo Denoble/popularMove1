@@ -59,7 +59,6 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
     public void onBindViewHolder(@NonNull ViewHolder imageViewHolder, int position) {
         Movie movie = mMovieList.get(position);
         imageViewHolder.bind(movie, imageViewHolder.imageView);
-        Log.d("ADAPTER BINDER",movie.getThumbnail());
 
     }
 

@@ -43,7 +43,7 @@ public class JsonUtil {
             }
 
         } catch (Exception ee) {
-            Log.e("A", "Fail to parse JSON: " + ee.getMessage());
+            ee.printStackTrace();
         }
         return mMovies;
     }
@@ -75,7 +75,7 @@ public class JsonUtil {
 
         }
         catch (Exception ee) {
-            Log.e("PASSING TRAILERS:", "Fail to parse JSON: " + ee.getMessage());
+            ee.printStackTrace();
         }
         return movie;
     }
@@ -105,7 +105,7 @@ public class JsonUtil {
             movie.setReviews(reviews);
         }
         catch (Exception ee) {
-            Log.e("PASSING REVIEWS:", "Fail to parse JSON: " + ee.getMessage());
+           ee.printStackTrace();
         }
         return movie;
     }
