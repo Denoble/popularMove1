@@ -1,18 +1,20 @@
-package com.gevcorst.popularmoviesstage1.Database;
-import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
+package com.gevcorst.popular_movies_in_theaters.Database;
+
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.List;
 
 @Dao
 public interface FavoriteDao {
     @Query("SELECT * FROM favorite ORDER BY mMovieId")
-   LiveData<List<UsersFavorite>> loadAllTasks();
+    LiveData<List<UsersFavorite>> loadAllTasks();
 
     @Insert
     void insertFavorite(UsersFavorite favorite);

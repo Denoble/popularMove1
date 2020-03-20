@@ -1,8 +1,9 @@
-package com.gevcorst.popularmoviesstage1.Database;
+package com.gevcorst.popular_movies_in_theaters.Database;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
+
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 @Entity(tableName = "favorite")
 public class UsersFavorite {

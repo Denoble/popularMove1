@@ -1,10 +1,10 @@
-package com.gevcorst.popularmoviesstage1.Database;
+package com.gevcorst.popular_movies_in_theaters.Database;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
-import android.util.Log;
+
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 
 // Specifying our entity class
 @Database(entities = {UsersFavorite.class}, version = 1, exportSchema = false)
@@ -17,7 +17,7 @@ public abstract class UserFavoriteDataBase extends RoomDatabase {
 
     /**
      *
-     * @param context
+     * @param context  The application context
      * @return An instance of SQLITE DATABASE
      */
     public static  UserFavoriteDataBase getInstance(Context context){

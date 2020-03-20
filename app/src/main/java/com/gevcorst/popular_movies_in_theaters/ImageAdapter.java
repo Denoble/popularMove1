@@ -1,7 +1,6 @@
-package com.gevcorst.popularmoviesstage1;
+package com.gevcorst.popular_movies_in_theaters;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +8,10 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.gevcorst.popularmoviesstage1.Model.Movie;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.gevcorst.popular_movies_in_theaters.Model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -25,7 +27,7 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
     private static int viewHolderCount;
     private final Context mContext;
     private final List<Movie> mMovieList;
-    private String mImageString;
+
 
     public ImageAdapter(int numberOfItems, ListItemClickListener listener,List<Movie> list,Context mContext) {
         mOnClickListener = listener;

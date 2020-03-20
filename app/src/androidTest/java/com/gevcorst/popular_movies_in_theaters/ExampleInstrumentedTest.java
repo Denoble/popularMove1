@@ -1,4 +1,4 @@
-package com.gevcorst.popularmoviesstage1;
+package com.gevcorst.popular_movies_in_theaters;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.gevcorst.popularmoviesstage1", appContext.getPackageName());
+        assertEquals("com.gevcorst.popular_movies_in_theaters", appContext.getPackageName());
     }
 }

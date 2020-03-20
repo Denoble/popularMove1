@@ -1,8 +1,10 @@
-package com.gevcorst.popularmoviesstage1;
+package com.gevcorst.popular_movies_in_theaters;
 
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
+
+
+import androidx.annotation.NonNull;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

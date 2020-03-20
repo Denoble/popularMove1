@@ -1,29 +1,28 @@
-package com.gevcorst.popularmoviesstage1;
+package com.gevcorst.popular_movies_in_theaters;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Intent;
 import android.net.Uri;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gevcorst.popularmoviesstage1.Database.FavoriteDao;
-import com.gevcorst.popularmoviesstage1.Database.UserFavoriteDataBase;
-import com.gevcorst.popularmoviesstage1.Database.UsersFavorite;
-import com.gevcorst.popularmoviesstage1.Model.Movie;
-import com.gevcorst.popularmoviesstage1.Model.MovieViewModel;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
+
+import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
+import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
+import com.gevcorst.popular_movies_in_theaters.Model.Movie;
+import com.gevcorst.popular_movies_in_theaters.Model.MovieViewModel;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 

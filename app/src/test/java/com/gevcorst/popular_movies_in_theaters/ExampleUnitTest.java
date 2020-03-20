@@ -1,4 +1,4 @@
-package com.gevcorst.popularmoviesstage1;
+package com.gevcorst.popular_movies_in_theaters;
 
 import org.junit.Test;
 

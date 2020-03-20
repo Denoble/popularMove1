@@ -1,18 +1,19 @@
-package com.gevcorst.popularmoviesstage1.Model;
+package com.gevcorst.popular_movies_in_theaters.Model;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
+
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
 
-import com.gevcorst.popularmoviesstage1.Database.UserFavoriteDataBase;
-import com.gevcorst.popularmoviesstage1.Database.UsersFavorite;
-import com.gevcorst.popularmoviesstage1.Utilities.JsonUtil;
-import com.gevcorst.popularmoviesstage1.Utilities.Network;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
+import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
+import com.gevcorst.popular_movies_in_theaters.Utilities.JsonUtil;
+import com.gevcorst.popular_movies_in_theaters.Utilities.Network;
 
 import java.io.IOException;
 import java.net.URL;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.gevcorst.popularmoviesstage1">
+    package="com.gevcorst.popular_movies_in_theaters">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -22,11 +22,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailActivity" android:parentActivityName=".MainActivity"
+        <activity android:name="com.gevcorst.popular_movies_in_theaters.DetailActivity" android:parentActivityName="com.gevcorst.popular_movies_in_theaters.MainActivity"
             tools:targetApi="jelly_bean">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value="com.gevcorst.popular_movies_in_theaters.MainActivity" />
 
         </activity>
     </application>

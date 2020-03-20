@@ -1,8 +1,10 @@
-package com.gevcorst.popularmoviesstage1.Model;
+package com.gevcorst.popular_movies_in_theaters.Model;
 
-import android.arch.lifecycle.ViewModel;
+
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.lifecycle.ViewModel;
 
 import java.util.Comparator;
 import java.util.Date;

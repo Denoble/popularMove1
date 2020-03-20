@@ -1,8 +1,6 @@
-package com.gevcorst.popularmoviesstage1.Utilities;
+package com.gevcorst.popular_movies_in_theaters.Utilities;
 
-import android.util.Log;
-
-import com.gevcorst.popularmoviesstage1.Model.Movie;
+import com.gevcorst.popular_movies_in_theaters.Model.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

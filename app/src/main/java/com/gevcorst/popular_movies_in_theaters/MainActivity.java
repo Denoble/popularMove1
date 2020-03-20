@@ -1,26 +1,30 @@
-package com.gevcorst.popularmoviesstage1;
+package com.gevcorst.popular_movies_in_theaters;
 
-import android.arch.lifecycle.ViewModelProviders;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.gevcorst.popularmoviesstage1.Database.UserFavoriteDataBase;
-import com.gevcorst.popularmoviesstage1.Database.UsersFavorite;
-import com.gevcorst.popularmoviesstage1.Model.Movie;
-import com.gevcorst.popularmoviesstage1.Model.MovieViewModel;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
+import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
+import com.gevcorst.popular_movies_in_theaters.Model.Movie;
+import com.gevcorst.popular_movies_in_theaters.Model.MovieViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
