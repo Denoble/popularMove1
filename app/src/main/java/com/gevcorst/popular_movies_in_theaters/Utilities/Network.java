@@ -1,7 +1,7 @@
 package com.gevcorst.popular_movies_in_theaters.Utilities;
 
 import android.net.Uri;
-
+import com.gevcorst.popular_movies_in_theaters.BuildConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -13,7 +13,7 @@ public class Network {
     private final static String  BASED_URL_API = "http://api.themoviedb.org/3/movie/popular/";
     private final static String  TOP_RATED_URL_API = "http://api.themoviedb.org/3/movie/top_rated/";
     private final static String REVIEWANDVIDEO_BASED_URL = "https://api.themoviedb.org/3/movie/";
-    private final static String APIKEY = "1dd6561c4403821b76cbf88ec92d820f";
+    public final static String THEMOVIEDB_APIKEY = BuildConfig.THEMOVIEDB_API_KEY;
     private final static String APPEND_TO_RESPONSE_TRAILERS_PARAM = "videos";
     private final static String APPEND_TO_RESPONSE_REVIEWS_PARAM ="reviews";
 
@@ -23,7 +23,7 @@ public class Network {
      */
     public static URL buildUrl(){
         Uri builtUri = Uri.parse(BASED_URL_API).buildUpon()
-                .appendQueryParameter("api_key",APIKEY)
+                .appendQueryParameter("api_key",THEMOVIEDB_APIKEY)
                 .build();
         URL url = null;
         try{
@@ -36,7 +36,7 @@ public class Network {
     }
     public static URL buildTopRatedUrl(){
         Uri builtUri = Uri.parse(TOP_RATED_URL_API).buildUpon()
-                .appendQueryParameter("api_key",APIKEY)
+                .appendQueryParameter("api_key",THEMOVIEDB_APIKEY)
                 .build();
         URL url = null;
         try{
@@ -57,7 +57,7 @@ public class Network {
         Uri builtUri = Uri.parse(REVIEWANDVIDEO_BASED_URL).buildUpon()
                 .appendPath(movieId)
                 .appendPath(APPEND_TO_RESPONSE_TRAILERS_PARAM)
-                .appendQueryParameter("api_key",APIKEY)
+                .appendQueryParameter("api_key",THEMOVIEDB_APIKEY)
                 .build();
         URL url = null;
         try{
@@ -77,7 +77,7 @@ public class Network {
         Uri builtUri = Uri.parse(REVIEWANDVIDEO_BASED_URL).buildUpon()
                 .appendPath(movieId)
                 .appendPath(APPEND_TO_RESPONSE_REVIEWS_PARAM)
-                .appendQueryParameter("api_key",APIKEY)
+                .appendQueryParameter("api_key",THEMOVIEDB_APIKEY)
 
                 .build();
         URL url = null;
