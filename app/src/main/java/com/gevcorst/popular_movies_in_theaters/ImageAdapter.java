@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.gevcorst.popular_movies_in_theaters.Model.Movie;
 import com.gevcorst.popular_movies_in_theaters.Model.TheMovie;
+import com.gevcorst.popular_movies_in_theaters.Utilities.ImageLoader;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -114,9 +115,11 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
             String completeImageUrl = mImageUrl +
                     mImageSize +
                     movie.getPosterPath();
-            Picasso.get().load(completeImageUrl).into(imageView);
+            ImageLoader.INSTANCE.bindImage(imageView,completeImageUrl);
+            //Picasso.get().load(completeImageUrl).into(imageView);
 
         }
 
     }
+
 }

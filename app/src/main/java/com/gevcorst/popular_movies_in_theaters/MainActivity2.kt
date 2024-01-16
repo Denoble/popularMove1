@@ -4,6 +4,7 @@ import android.net.ConnectivityManager
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase
 import com.gevcorst.popular_movies_in_theaters.databinding.ActivityMainBinding
@@ -20,10 +21,6 @@ class MainActivity2 : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val mGridLayoutManager = GridLayoutManager(this, 2)
-        binding.rvNumbers.layoutManager = mGridLayoutManager
-        binding.rvNumbers.setHasFixedSize(true)
-        val mProgressBar = binding.pbLoadingIndicator
         val userFavoriteDataBase = UserFavoriteDataBase.getInstance(
             applicationContext
         )
@@ -37,7 +34,9 @@ class MainActivity2 : AppCompatActivity(){
     }
     override fun onResume() {
         super.onResume()
-        mainViewModel.fetchPlayingNow()
+        mainViewModel.popularMovieList.observe(this, Observer {
+           // binding.rvNumbers.adapter = ImageAdapter(it)
+        })
     }
 
 }

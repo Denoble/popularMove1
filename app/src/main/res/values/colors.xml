@@ -5,6 +5,7 @@
     <color name="colorAccent">#018786</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorSecondary">#038387</color>
+    <color name="ivory_white">#F8F8FF</color>
     <color name="colorDivider">#455A64</color>
 
 </resources>

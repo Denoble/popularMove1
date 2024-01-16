@@ -32,8 +32,9 @@ class MainMovieViewModel(
     val upcomingMovies:LiveData<List<TheMovie>> = _upcomingMovies
     init {
         fetchPopularMovies()
-        //fetchPlayingNow()
-        //fetchTopRatedMovies()
+        fetchPlayingNow()
+        fetchTopRatedMovies()
+        fetchUpComingMovies()
     }
 
     fun fetchPlayingNow() {

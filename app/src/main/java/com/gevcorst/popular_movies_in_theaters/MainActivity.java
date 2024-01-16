@@ -54,15 +54,12 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         setContentView(binding.getRoot());
         getWindow().setBackgroundDrawable(
                 new ColorDrawable(ContextCompat.getColor(getApplicationContext(),
-                        R.color.colorPrimary)));
+                        R.color.colorWhite)));
         getSupportActionBar().setBackgroundDrawable(
                 new ColorDrawable(getResources().getColor(R.color.colorPrimary,
                         getTheme())));
         mImageList = binding.rvNumbers;
-        ProgressBar mProgressBar = binding.pbLoadingIndicator;
-        GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 2);
-        mImageList.setLayoutManager(mGridLayoutManager);
-        mImageList.setHasFixedSize(true);
+
         UserFavoriteDataBase userFavoriteDataBase = UserFavoriteDataBase.getInstance(getApplicationContext());
         movieViewModel =
                 ViewModelProviders.of(this).get(MainMovieViewModel.class);
@@ -136,8 +133,8 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
     }
 
     private void observePopularMovies() {
-            movieViewModel.getPopularMovieList().observe(this, latestMovies -> {
-                movies = (ArrayList<TheMovie>) latestMovies;
+            movieViewModel.getPlayingNow() .observe(this, latestMovies -> {
+                movies =  latestMovies;
                 Log.i("SetUp",latestMovies.toString());
                 setupAdapter(movies);
             });
@@ -145,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
     }
 
     private void setUpTopRatedViewModel() {
-        if (movies == null && !isNetworkAvailable()) {
+       /* if (movies == null && !isNetworkAvailable()) {
             Toast toast =
                     Toast.makeText(getApplicationContext(),
                             "No INTERNET connection!", Toast.LENGTH_LONG);
@@ -156,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
                 setupAdapter(movies);
             });
 
-        }
+        }*/
 
     }
 
