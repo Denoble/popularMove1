@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @JsonClass(generateAdapter = true)
-data class TheMovieDbResult(
+data class TheMovie(
     @Json(name = "adult")
     val adult: Boolean,
     @Json(name = "backdrop_path")

@@ -12,7 +12,7 @@ data class MovieData(
     @Json(name = "page")
     val page: Int,
     @Json(name = "results")
-    val theMovieDbResults: List<TheMovieDbResult>,
+    val theMovieDbResults: List<TheMovie>,
     @Json(name = "total_pages")
     val totalPages: Int,
     @Json(name = "total_results")
