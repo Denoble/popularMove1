@@ -3,12 +3,14 @@ package com.gevcorst.popular_movies_in_theaters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,6 +27,7 @@ import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
 import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
 import com.gevcorst.popular_movies_in_theaters.Model.Movie;
 import com.gevcorst.popular_movies_in_theaters.Model.MovieViewModel;
+import com.gevcorst.popular_movies_in_theaters.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,17 +41,25 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
     private List<UsersFavorite> mFavoriteMovies;
     private final String LOG_MASSAGE = this.getClass().getSimpleName();
     private MovieViewModel movieViewModel;
-    private boolean isAfavoriteList,getTopRatedMovies;
+    private boolean isAfavoriteList, getTopRatedMovies;
     private final String BOOLEAN_INSTANCE_STATE_KEY = "isAFovriteKey";
+
+    private ActivityMainBinding binding;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        getWindow().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getApplicationContext(), R.color.colorPrimary)));
-        //getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorDarkGray)));
-        mImageList = findViewById(R.id.rv_numbers);
-        ProgressBar mProgressBar = findViewById(R.id.pb_loading_indicator);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        getWindow().setBackgroundDrawable(
+                new ColorDrawable(ContextCompat.getColor(getApplicationContext(),
+                        R.color.colorPrimary)));
+        getSupportActionBar().setBackgroundDrawable(
+                new ColorDrawable(getResources().getColor(R.color.colorPrimary,
+                        getTheme())));
+        mImageList = binding.rvNumbers;
+        ProgressBar mProgressBar = binding.pbLoadingIndicator;
         GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 2);
         mImageList.setLayoutManager(mGridLayoutManager);
         mImageList.setHasFixedSize(true);
@@ -57,31 +68,30 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
                 ViewModelProviders.of(this).get(MovieViewModel.class);
 
 
-       if(savedInstanceState != null){
-            boolean [] instanceStateBoolean = savedInstanceState.getBooleanArray(BOOLEAN_INSTANCE_STATE_KEY);
+        if (savedInstanceState != null) {
+            boolean[] instanceStateBoolean = savedInstanceState.getBooleanArray(
+                    BOOLEAN_INSTANCE_STATE_KEY);
             isAfavoriteList = instanceStateBoolean[0];
             getTopRatedMovies = instanceStateBoolean[1];
-            if(isAfavoriteList && getTopRatedMovies){
+            if (isAfavoriteList && getTopRatedMovies) {
                 setUpTopRatedViewModel();
                 setUpFavoriteMovieViewModel();
             }
-            if(isAfavoriteList && !getTopRatedMovies){
-               setUpViewModel();
+            if (isAfavoriteList && !getTopRatedMovies) {
+                setUpViewModel();
                 setUpFavoriteMovieViewModel();
             }
-            if(getTopRatedMovies && !isAfavoriteList){
+            if (getTopRatedMovies && !isAfavoriteList) {
                 setUpTopRatedViewModel();
             }
             if(!isAfavoriteList && !getTopRatedMovies){
                 setUpViewModel();
             }
+        } else {
+            setUpViewModel();
         }
-        else{
-           setUpViewModel();
-       }
 
     }
-
 
     /*
      * The method sets up the RecyclerView Adapter class
@@ -133,12 +143,14 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         } else {
             movieViewModel.getMovieList().observe(this, latestMovies -> {
                 movies = (ArrayList<Movie>) latestMovies;
+                Log.i("SetUp",latestMovies.toString());
                 setupAdapter(movies);
             });
 
         }
 
     }
+
     private void setUpTopRatedViewModel() {
         if (movies == null && !isNetworkAvailable()) {
             Toast toast =
@@ -194,44 +206,43 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
     @SuppressWarnings("JavaDoc")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        int id = item.getItemId();
+        if (id == R.id.sortByRating) {
             // action with ID sortByRating was selected
-            case R.id.sortByRating:
-                getTopRatedMovies = true;
-                isAfavoriteList = false;
-                setUpTopRatedViewModel();
-                //movies.sort(Movie.movieRatingComparator);
-                setupAdapter(movies);
+            getTopRatedMovies = true;
+            isAfavoriteList = false;
+            setUpTopRatedViewModel();
+            //movies.sort(Movie.movieRatingComparator);
+            setupAdapter(movies);
+        } else if (id == R.id.sortByPopularity) {
+            getTopRatedMovies = false;
+            isAfavoriteList = false;
+            setUpViewModel();
+            // movies.sort(Movie.moviePopularityComparator);
+            setupAdapter(movies);
+        } else if (id == R.id.sortByFavorite) {
+            isAfavoriteList = true;
+            setUpFavoriteMovieViewModel();
+        } else {
 
-                break;
-            // action with ID sortByPopularity was selected
-            case R.id.sortByPopularity:
-                getTopRatedMovies = false;
-                isAfavoriteList = false;
-                setUpViewModel();
-               // movies.sort(Movie.moviePopularityComparator);
-                setupAdapter(movies);
-
-                break;
-            // action with ID sortByPopularity was selected
-            case R.id.sortByFavorite:
-                isAfavoriteList = true;
-                setUpFavoriteMovieViewModel();
-                break;
-            default:
-                break;
         }
-
         return true;
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        boolean[] bools =  new boolean[2];
+        boolean[] bools = new boolean[2];
         bools[0] = isAfavoriteList;
         bools[1] = getTopRatedMovies;
-        outState.putBooleanArray(BOOLEAN_INSTANCE_STATE_KEY,bools);
+        outState.putBooleanArray(BOOLEAN_INSTANCE_STATE_KEY, bools);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setUpViewModel();
+    }
+
 
 }

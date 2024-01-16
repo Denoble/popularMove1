@@ -13,7 +13,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
 import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
 import com.gevcorst.popular_movies_in_theaters.Utilities.JsonUtil;
-import com.gevcorst.popular_movies_in_theaters.Utilities.Network;
+import com.gevcorst.popular_movies_in_theaters.repository.services.Network;
 
 import java.io.IOException;
 import java.net.URL;

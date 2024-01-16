@@ -19,7 +19,7 @@ public class JsonUtil {
         ArrayList<Movie> mMovies = new ArrayList<>();
         try {
             JSONObject jsonBody = new JSONObject(json);
-            JSONArray results = jsonBody.getJSONArray("results");
+            JSONArray results = jsonBody.getJSONArray("theMovieDbResults");
             int arrayLength = results.length();
             for (int i = 0; i < arrayLength; i++) {
                 Movie movie = new Movie();
@@ -51,7 +51,7 @@ public class JsonUtil {
             boolean gotTrailerTwoKey  = false;
         try {
             JSONObject jsonBody = new JSONObject(json);
-            JSONArray movieTrailers = jsonBody.getJSONArray("results");
+            JSONArray movieTrailers = jsonBody.getJSONArray("theMovieDbResults");
             int arrayLength = movieTrailers.length();
             String youtubeURLKey;
             for (int i = 0; i < arrayLength; i++) {
@@ -84,7 +84,7 @@ public class JsonUtil {
         try {
             List<String> reviews = new ArrayList<>();
             JSONObject jsonBody = new JSONObject(json);
-            JSONArray results = jsonBody.getJSONArray("results");
+            JSONArray results = jsonBody.getJSONArray("theMovieDbResults");
             int arrayLength = results.length();
             for (int i = 0; i < arrayLength; i++) {
                 StringBuilder stringBuilder =  new StringBuilder();

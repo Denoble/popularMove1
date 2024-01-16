@@ -1,4 +1,4 @@
-package com.gevcorst.popular_movies_in_theaters.Utilities;
+package com.gevcorst.popular_movies_in_theaters.repository.services;
 
 import android.net.Uri;
 import com.gevcorst.popular_movies_in_theaters.BuildConfig;
@@ -14,6 +14,7 @@ public class Network {
     private final static String  TOP_RATED_URL_API = "http://api.themoviedb.org/3/movie/top_rated/";
     private final static String REVIEWANDVIDEO_BASED_URL = "https://api.themoviedb.org/3/movie/";
     public final static String THEMOVIEDB_APIKEY = BuildConfig.THEMOVIEDB_API_KEY;
+    public final static String THEMOVIEDB_BEARER = BuildConfig.THEMOVIEDB_BEARER;
     private final static String APPEND_TO_RESPONSE_TRAILERS_PARAM = "videos";
     private final static String APPEND_TO_RESPONSE_REVIEWS_PARAM ="reviews";
 
