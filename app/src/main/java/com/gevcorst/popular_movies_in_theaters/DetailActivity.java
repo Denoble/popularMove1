@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -87,6 +88,7 @@ public class DetailActivity extends AppCompatActivity {
       if (bundle != null) {
           movie = bundle.getParcelable("MOVIE_KEY");
       }
+      mainMovieViewModel.fetchVideos(movie.getId());
     movieViewModel =
         ViewModelProviders.of(this).get(MovieViewModel.class);
 
@@ -108,7 +110,8 @@ public class DetailActivity extends AppCompatActivity {
   private void setUpMovieTrailer() {
     mainMovieViewModel.getVideos().observe(this,videos -> {
       playTrailer1.setOnClickListener(view -> {
-        String youtubeUrl = videos.getResults().get(0).getKey();
+        String youtubeUrl = videos.getResults().get(0).getKey();;
+        Log.i("YouTube",youtubeUrl);
         playTrailer(playTrailer1,JsonUtil.YOUTUBE_URL+ youtubeUrl);
       });
       playTrailer2.setOnClickListener(view -> {
@@ -131,8 +134,10 @@ public class DetailActivity extends AppCompatActivity {
       mReviews = review.getResults();
       StringBuilder sb = new StringBuilder();
       for (Result s : mReviews) {
-        sb.append(s.toString());
+        sb.append(s.getAuthor());
         sb.append("\n\n");
+        sb.append(s.getContent());
+        sb.append("\n");
       }
       mReviewList.setText(sb.toString());
       mReviewList.setMovementMethod(new ScrollingMovementMethod());
