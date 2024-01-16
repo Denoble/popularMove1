@@ -19,6 +19,12 @@ import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
 import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
 import com.gevcorst.popular_movies_in_theaters.Model.Movie;
 import com.gevcorst.popular_movies_in_theaters.Model.MovieViewModel;
+import com.gevcorst.popular_movies_in_theaters.Model.Result;
+import com.gevcorst.popular_movies_in_theaters.Model.TheMovie;
+import com.gevcorst.popular_movies_in_theaters.Utilities.ImageLoader;
+import com.gevcorst.popular_movies_in_theaters.Utilities.JsonUtil;
+import com.gevcorst.popular_movies_in_theaters.databinding.ActivityDetailBinding;
+import com.gevcorst.popular_movies_in_theaters.viewModel.MainMovieViewModel;
 import com.squareup.picasso.Picasso;
 import java.util.List;
 import java.util.Locale;
@@ -31,21 +37,23 @@ public class DetailActivity extends AppCompatActivity {
   private TextView mTitleTextView;
   private TextView mDuration;
   private TextView favoriteTextView;
-  private Movie movie;
+  private TheMovie movie;
   private Button playTrailer1, playTrailer2, favoriteButton;
   private UserFavoriteDataBase mFavoriteMovies;
   private TextView mReviewList;
   private MovieViewModel movieViewModel;
-  private List<String> mReviews;
+  private List<Result> mReviews;
   private boolean isAFavorite;
-
+  private MainMovieViewModel mainMovieViewModel;
+  private ActivityDetailBinding binding;
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_detail);
-    mFavoriteMovies = UserFavoriteDataBase.getInstance(getApplicationContext());
-    configureViews();
-    setViewsData();
+    binding = ActivityDetailBinding.inflate(getLayoutInflater());
+    setContentView(binding.getRoot());
+    mainMovieViewModel = ViewModelProviders.of(
+            this).get(MainMovieViewModel.class);
+
   }
 
   /**
@@ -86,44 +94,44 @@ public class DetailActivity extends AppCompatActivity {
     String mImageSize = "w342/";
     String completeImageUrl = mImageUrl +
         mImageSize +
-        movie.getThumbnail();
-    Picasso.get().load(completeImageUrl).into(mImageView);
+        movie.getPosterPath();
+    ImageLoader.INSTANCE.bindImage(binding.tumbnail.ivThumbnail,completeImageUrl);
     mTitleTextView.setText(movie.getOriginalTitle());
-    mDateTextView.setText(movie.getSReleaseDate());
-    mRatingTextView.setText(String.format(Locale.getDefault(), movie.getUserRating().toString()));
-    mSynopsisTextView.setText(movie.getSynopsis());
+    mDateTextView.setText(movie.getReleaseDate());
+    mRatingTextView.setText(String.format(Locale.getDefault(), movie.getPosterPath().toString()));
+    mSynopsisTextView.setText(movie.getOverview());
     setUpMovieTrailer();
     setMovieReviews();
     monitorFavoriteInDataBase();
   }
 
   private void setUpMovieTrailer() {
-    movieViewModel.getMovieTrailers(movie).observe(this, movie -> {
-      mDuration.setText(movie.getDuration());
+    mainMovieViewModel.getVideos().observe(this,videos -> {
       playTrailer1.setOnClickListener(view -> {
-        String youtubeUrl = movie.getYoutubeURL();
-        playTrailer(playTrailer1, youtubeUrl);
+        String youtubeUrl = videos.getResults().get(0).getKey();
+        playTrailer(playTrailer1,JsonUtil.YOUTUBE_URL+ youtubeUrl);
       });
       playTrailer2.setOnClickListener(view -> {
-        String youtubeUrl = movie.getYoutubeURL2();
+        String youtubeUrl = videos.getResults().get(1).getKey();
         if (youtubeUrl == null) {
           playTrailer2.setVisibility(View.GONE);
           Toast toast = Toast.makeText(getApplicationContext(), "No trailer link available",
-              Toast.LENGTH_LONG);
+                  Toast.LENGTH_LONG);
           toast.show();
         } else {
-          playTrailer(playTrailer2, youtubeUrl);
+          playTrailer(playTrailer2, JsonUtil.YOUTUBE_URL+ youtubeUrl);
         }
       });
     });
   }
 
   private void setMovieReviews() {
-    movieViewModel.getMovieReviews(movie).observe(this, movie -> {
-      mReviews = movie.getReviews();
+    mainMovieViewModel.fetchReviews(movie.getId());
+    mainMovieViewModel.getReviews().observe(this,review -> {
+      mReviews = review.getResults();
       StringBuilder sb = new StringBuilder();
-      for (String s : mReviews) {
-        sb.append(s);
+      for (Result s : mReviews) {
+        sb.append(s.toString());
         sb.append("\n\n");
       }
       mReviewList.setText(sb.toString());
@@ -140,7 +148,7 @@ public class DetailActivity extends AppCompatActivity {
       public void onChanged(@Nullable List<UsersFavorite> usersFavorites) {
         assert usersFavorites != null;
         UsersFavorite usersFavorite = usersFavorites.stream()
-            .filter(u -> u.getMovieId() == movie.getMovieId()).findAny().orElse(null);
+            .filter(u -> u.getMovieId() == movie.getId()).findAny().orElse(null);
         favoriteButton = findViewById(R.id.favoriteButton);
         if (usersFavorite == null) {
           isAFavorite = false;
@@ -153,7 +161,7 @@ public class DetailActivity extends AppCompatActivity {
         }
         favoriteButton.setOnClickListener(view -> {
           if (isAFavorite) {
-            removeFromFavoriteMovies(movie.getMovieId());
+            removeFromFavoriteMovies(movie.getId());
           } else {
             addToFavoriteMovies();
           }
@@ -164,7 +172,7 @@ public class DetailActivity extends AppCompatActivity {
 
   private void addToFavoriteMovies() {
     final UsersFavorite usersFavorite = new UsersFavorite(movie.getOriginalTitle(),
-        movie.getMovieId());
+        movie.getId());
     AppExecutors.getInstance()
         .diskIO()
         .execute(() -> mFavoriteMovies.favoriteDao().insertFavorite(usersFavorite));
@@ -208,5 +216,20 @@ public class DetailActivity extends AppCompatActivity {
                 }
             })*/;
     return alertDialog;
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+
+
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    mFavoriteMovies = UserFavoriteDataBase.getInstance(getApplicationContext());
+    configureViews();
+    setViewsData();
   }
 }

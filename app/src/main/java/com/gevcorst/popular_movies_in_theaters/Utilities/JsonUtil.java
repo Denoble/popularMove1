@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class JsonUtil {
-    private final static String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+    public final static String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 
     public static ArrayList<Movie> parsePopularMovieJson(String json) {
         ArrayList<Movie> mMovies = new ArrayList<>();
