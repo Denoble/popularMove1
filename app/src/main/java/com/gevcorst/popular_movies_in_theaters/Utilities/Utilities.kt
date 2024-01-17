@@ -20,15 +20,3 @@ object ImageLoader{
         }
     }
 }
-fun bindImage(imgView: ImageView, imgUrl: String?) {
-    imgUrl?.let {
-        val glideImgUrl = it.toUri().buildUpon().scheme("https").build()
-        Glide.with(imgView.context)
-            .load(glideImgUrl).apply(
-                RequestOptions()
-                    .placeholder(R.drawable.loading_animation)
-                    .error(R.drawable.broken_image)
-            )
-            .into(imgView)
-    }
-}

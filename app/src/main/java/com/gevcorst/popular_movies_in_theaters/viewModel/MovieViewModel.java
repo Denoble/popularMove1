@@ -1,4 +1,4 @@
-package com.gevcorst.popular_movies_in_theaters.Model;
+package com.gevcorst.popular_movies_in_theaters.viewModel;
 
 import android.app.Application;
 
@@ -12,6 +12,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
 import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
+import com.gevcorst.popular_movies_in_theaters.Model.Movie;
 import com.gevcorst.popular_movies_in_theaters.Utilities.JsonUtil;
 import com.gevcorst.popular_movies_in_theaters.repository.services.Network;
 

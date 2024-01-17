@@ -110,13 +110,6 @@ public class Movie extends ViewModel implements Parcelable {
     public void setPopularity(Double mPopularity) {
         this.mPopularity = mPopularity;
     }
-    public String getDuration() {
-        return mDuration;
-    }
-
-    public void setDuration(String mDuration) {
-        this.mDuration = mDuration;
-    }
 
     public String getYoutubeURL() {
         return mYoutubeURL;

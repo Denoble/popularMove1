@@ -66,6 +66,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/synopsis" />
 
             <include
+                android:id="@+id/trailer"
                 layout="@layout/trailer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -75,9 +76,5 @@
                 app:layout_constraintBottom_toBottomOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
 
 </ScrollView>
