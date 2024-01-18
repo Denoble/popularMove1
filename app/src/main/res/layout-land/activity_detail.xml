@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".DetailActivity">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -38,11 +39,12 @@
             layout="@layout/thumbnail"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="@id/guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title"
-           />
+            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
         <include
             android:id="@+id/synopsis"
@@ -52,10 +54,15 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
 
-            app:layout_constraintEnd_toEndOf="@+id/tumbnail"
+            app:layout_constraintEnd_toEndOf="@+id/guideline"
             app:layout_constraintStart_toStartOf="@+id/tumbnail"
-            app:layout_constraintTop_toBottomOf="@+id/tumbnail"
-           />
+            app:layout_constraintTop_toBottomOf="@+id/tumbnail" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            app:layout_constraintGuide_percent="0.5"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
 
         <ImageView
             android:id="@+id/divider"
@@ -67,10 +74,11 @@
             android:background="@color/colorDivider"
             android:contentDescription="@string/detailViewThumbnail_Description"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tumbnail"
+            app:layout_constraintStart_toEndOf="@+id/guideline"
             app:layout_constraintTop_toBottomOf="@+id/tv_title" />
 
         <include
+            android:id="@+id/trailer"
             layout="@layout/trailer"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -80,9 +88,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/divider"
-            app:layout_constraintTop_toTopOf="@+id/divider"
-           />
-
+            app:layout_constraintTop_toTopOf="@+id/divider" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

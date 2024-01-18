@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite
+import com.gevcorst.popular_movies_in_theaters.Model.MovieReview
 import com.gevcorst.popular_movies_in_theaters.Model.Review
 import com.gevcorst.popular_movies_in_theaters.Model.TheMovie
 import com.gevcorst.popular_movies_in_theaters.Model.Videos
@@ -24,8 +25,8 @@ class MainMovieViewModel(
     val favoriteList: LiveData<List<UsersFavorite>> = _favoriteMovieList
     private val _videos = MutableLiveData<Videos>()
     val videos:LiveData<Videos> = _videos
-    private val _reviews = MutableLiveData<Review>()
-    val reviews:LiveData<Review> = _reviews
+    private val _reviews = MutableLiveData<List<MovieReview>>()
+    val reviews:LiveData<List<MovieReview>> = _reviews
     private val _playingNow = MutableLiveData<List<TheMovie>>()
     val playingNow:LiveData<List<TheMovie>> = _playingNow
     private val _upcomingMovies = MutableLiveData<List<TheMovie>>()
@@ -94,7 +95,7 @@ class MainMovieViewModel(
         viewModelScope.launch {
             try {
                 repository.getReviews(id).collect{
-                    _reviews.value = it
+                    _reviews.value = it.movieReviews
                     Log.i("MovieReviews", it.toString())
                 }
 

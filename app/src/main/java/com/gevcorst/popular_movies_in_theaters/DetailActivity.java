@@ -19,7 +19,7 @@ import androidx.lifecycle.ViewModelProviders;
 import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
 import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
 import com.gevcorst.popular_movies_in_theaters.viewModel.MovieViewModel;
-import com.gevcorst.popular_movies_in_theaters.Model.Result;
+import com.gevcorst.popular_movies_in_theaters.Model.MovieReview;
 import com.gevcorst.popular_movies_in_theaters.Model.TheMovie;
 import com.gevcorst.popular_movies_in_theaters.Utilities.ImageLoader;
 import com.gevcorst.popular_movies_in_theaters.Utilities.JsonUtil;
@@ -33,7 +33,7 @@ public class DetailActivity extends AppCompatActivity {
     private UserFavoriteDataBase mFavoriteMovies;
     private TextView mReviewList;
     private MovieViewModel movieViewModel;
-    private List<Result> mReviews;
+    private List<MovieReview> mReviews;
     private boolean isAFavorite;
     private MainMovieViewModel mainMovieViewModel;
     private ActivityDetailBinding binding;
@@ -62,7 +62,6 @@ public class DetailActivity extends AppCompatActivity {
         if (bundle != null) {
             movie = bundle.getParcelable("MOVIE_KEY");
         }
-        mainMovieViewModel.fetchVideos(movie.getId());
         movieViewModel =
                 ViewModelProviders.of(this).get(MovieViewModel.class);
 
@@ -77,9 +76,6 @@ public class DetailActivity extends AppCompatActivity {
         binding.tumbnail.tvRating.setText(String.valueOf(
                 movie.getVoteAverage()));
         binding.synopsis.tvSynopsis.setText(movie.getOverview());
-        setUpMovieTrailer();
-        setMovieReviews();
-        monitorFavoriteInDataBase();
     }
 
     private void setUpMovieTrailer() {
@@ -107,20 +103,13 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void setMovieReviews() {
-        mainMovieViewModel.fetchReviews(movie.getId());
         mainMovieViewModel.getReviews().observe(this, review -> {
-            mReviews = review.getResults();
-            StringBuilder sb = new StringBuilder();
-            for (Result s : mReviews) {
-                sb.append(s.getAuthor());
-                sb.append("\n\n");
-                sb.append(s.getContent());
-                sb.append("\n");
-            }
-            mReviewList.setText(sb.toString());
-            mReviewList.setMovementMethod(new ScrollingMovementMethod());
+            var adapter = new MovieReviewAdapter(review,
+                    this);
+            binding.trailer.movieReviews.setAdapter(adapter);
         });
     }
+
 
     private void monitorFavoriteInDataBase() {
         movieViewModel.getFavoriteList().observe(this, new Observer<List<UsersFavorite>>() {
@@ -204,6 +193,9 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        setUpMovieTrailer();
+        setMovieReviews();
+        monitorFavoriteInDataBase();
 
 
     }
@@ -213,5 +205,7 @@ public class DetailActivity extends AppCompatActivity {
         super.onStart();
         mFavoriteMovies = UserFavoriteDataBase.getInstance(getApplicationContext());
         setViewsData();
+        mainMovieViewModel.fetchReviews(movie.getId());
+        mainMovieViewModel.fetchVideos(movie.getId());
     }
 }

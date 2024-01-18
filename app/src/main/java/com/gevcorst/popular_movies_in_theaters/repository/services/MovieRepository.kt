@@ -3,6 +3,7 @@ package com.gevcorst.popular_movies_in_theaters.repository.services
 import android.content.Context
 import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite
 import com.gevcorst.popular_movies_in_theaters.Model.MovieData
+import com.gevcorst.popular_movies_in_theaters.Model.MovieReview
 import com.gevcorst.popular_movies_in_theaters.Model.Review
 import com.gevcorst.popular_movies_in_theaters.Model.TheMovie
 import com.gevcorst.popular_movies_in_theaters.Model.Videos

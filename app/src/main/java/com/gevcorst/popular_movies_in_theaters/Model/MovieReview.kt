@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @JsonClass(generateAdapter = true)
 @Parcelize
-data class Result(
+data class MovieReview(
     @Json(name = "author")
     val author: String,
     @Json(name = "author_details")

@@ -2,6 +2,7 @@ package com.gevcorst.popular_movies_in_theaters.repository.services
 
 import com.gevcorst.popular_movies_in_theaters.BuildConfig
 import com.gevcorst.popular_movies_in_theaters.Model.MovieData
+import com.gevcorst.popular_movies_in_theaters.Model.MovieReview
 import com.gevcorst.popular_movies_in_theaters.Model.Review
 import com.gevcorst.popular_movies_in_theaters.Model.Videos
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory

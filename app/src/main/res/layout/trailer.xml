@@ -89,9 +89,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
-    <TextView
-        android:id="@+id/recyclerView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/movieReviews"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -100,7 +99,12 @@
         android:clipToPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvReviews" />
+        app:layout_constraintTop_toBottomOf="@+id/tvReviews"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="1"
+        tools:itemCount="12"
+        tools:listitem="@layout/movie_review_item"
+        />
 
 
 
