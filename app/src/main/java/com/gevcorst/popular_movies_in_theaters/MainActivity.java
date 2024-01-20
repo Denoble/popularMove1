@@ -96,19 +96,14 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.sortByRating) {
-            movieViewModel.fetchTopRatedMovies();
             movieViewModel.updateLastVisitedList(MenuOptions.TOP_RATING);
         } else if (id == R.id.sortByPopularity) {
-            movieViewModel.fetchPopularMovies();
             movieViewModel.updateLastVisitedList(MenuOptions.POPULAR);
         } else if (id == R.id.sortByFavorite) {
-            movieViewModel.fetchUserFavorites(db);
             movieViewModel.updateLastVisitedList(MenuOptions.FAVORITE);
         } else if (id == R.id.sortByPlayingNow) {
-            movieViewModel.fetchPlayingNow();
             movieViewModel.updateLastVisitedList(MenuOptions.NowPLAYING);
         } else if (id == R.id.sortByUpComing) {
-            movieViewModel.fetchUpComingMovies();
             movieViewModel.updateLastVisitedList(MenuOptions.UPCOMING);
 
         } else {
