@@ -14,5 +14,6 @@
     <string name="reviews">Reviews</string>
     <string name="todo">TODO</string>
     <string name="favorite_vote_button">favorite vote button</string>
+    <string name="textview">TextView</string>
 </resources>
 

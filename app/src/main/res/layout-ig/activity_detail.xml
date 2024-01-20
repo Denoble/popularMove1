@@ -13,20 +13,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/tv_title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:background="@color/colorSecondary"
-            android:gravity="start"
-            android:paddingStart="22dp"
-            android:paddingTop="20dp"
-            android:textColor="@color/colorWhite"
-            android:textSize="38sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
 
 
         <!--
@@ -42,7 +29,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="@id/guideline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            app:layout_constraintTop_toTopOf="parent"
             />
 
         <include
@@ -69,7 +56,7 @@
             android:contentDescription="@string/detailViewThumbnail_Description"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tumbnail"
-            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+            app:layout_constraintTop_toTopOf="parent" />
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"

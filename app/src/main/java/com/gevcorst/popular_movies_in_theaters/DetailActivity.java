@@ -2,15 +2,20 @@ package com.gevcorst.popular_movies_in_theaters;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.window.OnBackInvokedDispatcher;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.os.BuildCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.gevcorst.popular_movies_in_theaters.Database.AppDatabase;
@@ -23,6 +28,7 @@ import com.gevcorst.popular_movies_in_theaters.viewModel.MainMovieViewModel;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class DetailActivity extends AppCompatActivity {
     final String favoriteTextViewText = "MARK AS FAVORITE";
@@ -42,16 +48,19 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         mainMovieViewModel = new ViewModelProvider(this).get(MainMovieViewModel.class);
         db = AppDatabase.Companion.getInstance(this);
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         setViewsData();
+        getSupportActionBar().setTitle(movie.getTitle());
+        getSupportActionBar().setBackgroundDrawable(
+                new ColorDrawable(getResources().getColor(R.color.colorAccent,
+                        getTheme())));
         mainMovieViewModel.fetchReviews(movie.getMovieId());
         mainMovieViewModel.fetchVideos(movie.getMovieId());
-        mainMovieViewModel.checkIsFaveMovie(db,movie.getMovieId());
+        mainMovieViewModel.checkIsFaveMovie(db, movie.getMovieId());
 
     }
 
@@ -62,7 +71,7 @@ public class DetailActivity extends AppCompatActivity {
         setUpMovieTrailer();
         setMovieReviews();
         binding.tumbnail.favoriteButton.setOnClickListener(view -> {
-            Log.i("IsFave",isAFavorite.toString());
+            Log.i("IsFave", isAFavorite.toString());
             if (!isAFavorite) {
                 addToFavoriteMovies(movie);
 
@@ -72,6 +81,7 @@ public class DetailActivity extends AppCompatActivity {
         });
 
     }
+
 
     private void removeFaveIcon() {
         binding.tumbnail.tvForFavorite.setText(favoriteTextViewText);
@@ -97,7 +107,6 @@ public class DetailActivity extends AppCompatActivity {
                 mImageSize +
                 movie.getBackdropPath();
         ImageLoader.INSTANCE.bindImage(binding.tumbnail.ivThumbnail, completeImageUrl);
-        binding.tvTitle.setText(movie.getOriginalTitle());
         binding.tumbnail.tvDate.setText(movie.getReleaseDate());
         binding.tumbnail.tvRating.setText(String.valueOf(
                 movie.getVoteAverage()));
@@ -138,18 +147,18 @@ public class DetailActivity extends AppCompatActivity {
 
 
     private void addToFavoriteMovies(Movie movie) {
-        try{
-            mainMovieViewModel.addToFavorite(movie,db);
+        try {
+            mainMovieViewModel.addToFavorite(movie, db);
             Log.i("AddsToDb", "Movie Added");
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.i("AddsToDb", Arrays.toString(e.getStackTrace()));
         }
     }
 
     private void removeFromFavoriteMovies(Movie movie) {
-        try{
-            mainMovieViewModel.removeFromFavorite(movie,db);
-        }catch (Exception e){
+        try {
+            mainMovieViewModel.removeFromFavorite(movie, db);
+        } catch (Exception e) {
             Log.i("AddsToDb", Arrays.toString(e.getStackTrace()));
         }
     }
@@ -193,14 +202,11 @@ public class DetailActivity extends AppCompatActivity {
     private void observeFavoriteState() {
         mainMovieViewModel.getFavoriteState().observe(this, favState -> {
             isAFavorite = favState;
-            if(isAFavorite){
+            if (isAFavorite) {
                 addFavoriteIcon();
-            }
-            else {
+            } else {
                 removeFaveIcon();
             }
         });
     }
-
-
 }

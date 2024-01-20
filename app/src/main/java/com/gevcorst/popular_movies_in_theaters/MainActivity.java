@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -30,16 +31,9 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements ImageAdapter.ListItemClickListener {
-
     private RecyclerView mImageList;
     private List<com.gevcorst.popular_movies_in_theaters.Model.Movie> movies;
-    private ArrayList<Movie> topRateMovies;
-    private List<Movie> favoritesMovies;
-    private List<Movie> mFavoriteMovies;
-    private final String LOG_MASSAGE = this.getClass().getSimpleName();
     private MainMovieViewModel movieViewModel;
-    private boolean isAfavoriteList, getTopRatedMovies;
-    private final String BOOLEAN_INSTANCE_STATE_KEY = "isAFovriteKey";
     private AppDatabase db;
     private ActivityMainBinding binding;
 
@@ -49,25 +43,15 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        getWindow().setBackgroundDrawable(
-                new ColorDrawable(ContextCompat.getColor(getApplicationContext(),
-                        R.color.colorWhite)));
-        getSupportActionBar().setBackgroundDrawable(
-                new ColorDrawable(getResources().getColor(R.color.colorPrimary,
-                        getTheme())));
         db = AppDatabase.Companion.getInstance(this);
         mImageList = binding.rvNumbers;
         movieViewModel = new ViewModelProvider(this).get(MainMovieViewModel.class);
         observeLastVisitedList();
-        Log.i("CREATE", "We entered here !");
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        Log.i("Start", "We entered here !");
-
     }
 
     @Override
@@ -79,13 +63,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        Log.i("Stop", "We got here !!");
     }
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.i("Destory", "We got here !!");
     }
 
     /**
@@ -154,29 +137,26 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("JavaDoc")
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        com.gevcorst.popular_movies_in_theaters.Model.Movie movie = movies.get(clickedItemIndex);
+        Movie movie = movies.get(clickedItemIndex);
         Bundle bundle = new Bundle();
         bundle.putParcelable("MOVIE_KEY", movie);
         Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
     }
-
-
-    private Boolean isNetworkAvailable() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        assert cm != null;
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return (activeNetwork != null && activeNetwork.isConnected());
-    }
-
     private void observeMoviesList() {
         movieViewModel.getMovieList().observe(this, latestMovies -> {
-            movies = latestMovies;
-            Log.i("SetUp", latestMovies.toString());
-            setupAdapter(movies);
+            if(latestMovies.size() > 0){
+                movies = latestMovies;
+                binding.imageViewLoading.setVisibility(View.GONE);
+                binding.rvNumbers.setVisibility(View.VISIBLE);
+                setupAdapter(movies);
+                Log.i("SetUp", latestMovies.toString());
+            }else{
+                binding.imageViewLoading.setVisibility(View.VISIBLE);
+                binding.rvNumbers.setVisibility(View.GONE);
+            }
+
         });
 
     }
@@ -196,8 +176,11 @@ public class MainActivity extends AppCompatActivity
                 case UPCOMING -> {
                     movieViewModel.fetchUpComingMovies();
                 }
-                default -> {
+                case NowPLAYING -> {
                     movieViewModel.fetchPlayingNow();
+                }
+                default -> {
+
                 }
             }
         });

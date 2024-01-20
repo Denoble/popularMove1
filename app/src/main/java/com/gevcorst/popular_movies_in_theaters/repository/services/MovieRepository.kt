@@ -33,7 +33,4 @@ class MovieRepository {
         val videos = MovieDbRESTService.movieDBObject.getVideos(id).await()
         emit(videos)
     }
-    suspend fun getFavorites(context: Context):Flow<List<Movie>> = flow{
-
-    }
 }
