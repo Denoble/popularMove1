@@ -20,3 +20,6 @@ object ImageLoader{
         }
     }
 }
+enum class MenuOptions{
+    NowPLAYING,TOP_RATING,POPULAR,FAVORITE,UPCOMING
+}

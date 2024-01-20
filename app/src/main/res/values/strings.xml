@@ -9,6 +9,7 @@
     <string name="favorite">MARK AS FAVORITE:</string>
     <string name="sort_by_Favorite">Sort by Favorite</string>
     <string name="sort_by_now_playing">Sort by Playing Now</string>
+    <string name="sort_by_upcoming">Sort by Upcoming</string>
     <string name="trailers">Trailers:</string>
     <string name="reviews">Reviews</string>
     <string name="todo">TODO</string>

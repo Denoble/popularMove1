@@ -2,19 +2,23 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/sortByPlayingNow"
-        android:orderInCategory="1"
+        android:orderInCategory="0"
         android:title="@string/sort_by_now_playing" />
 
     <item
         android:id="@+id/sortByRating"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:title="@string/sort_by_ratings" />
     <item
         android:id="@+id/sortByPopularity"
-        android:orderInCategory="3"
+        android:orderInCategory="2"
         android:title="@string/sort_by_Popularity" />
     <item
         android:id="@+id/sortByFavorite"
-        android:orderInCategory="4"
+        android:orderInCategory="3"
         android:title="@string/sort_by_Favorite" />
+    <item
+        android:id="@+id/sortByUpComing"
+        android:orderInCategory="4"
+        android:title="@string/sort_by_upcoming" />
 </menu>
