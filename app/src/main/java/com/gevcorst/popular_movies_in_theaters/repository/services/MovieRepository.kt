@@ -1,11 +1,9 @@
 package com.gevcorst.popular_movies_in_theaters.repository.services
 
 import android.content.Context
-import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite
 import com.gevcorst.popular_movies_in_theaters.Model.MovieData
-import com.gevcorst.popular_movies_in_theaters.Model.MovieReview
 import com.gevcorst.popular_movies_in_theaters.Model.Review
-import com.gevcorst.popular_movies_in_theaters.Model.TheMovie
+import com.gevcorst.popular_movies_in_theaters.Model.Movie
 import com.gevcorst.popular_movies_in_theaters.Model.Videos
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -23,9 +21,9 @@ class MovieRepository {
         val topRatedMovies = MovieDbRESTService.movieDBObject.getTopRated().await()
         emit(topRatedMovies)
     }
-    suspend fun getUpComingMovies():Flow<List<TheMovie>> = flow{
+    suspend fun getUpComingMovies():Flow<List<Movie>> = flow{
         val upcomingMovies = MovieDbRESTService.movieDBObject.getUpcoming().await()
-        emit(upcomingMovies.theMovieDbResults)
+        emit(upcomingMovies.movieDbResults)
     }
     suspend fun getReviews(id:Int):Flow<Review> = flow {
         val reviews = MovieDbRESTService.movieDBObject.getReviews(id).await()
@@ -35,7 +33,7 @@ class MovieRepository {
         val videos = MovieDbRESTService.movieDBObject.getVideos(id).await()
         emit(videos)
     }
-    suspend fun getFavorites(context: Context):Flow<List<UsersFavorite>> = flow{
+    suspend fun getFavorites(context: Context):Flow<List<Movie>> = flow{
 
     }
 }

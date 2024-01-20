@@ -13,19 +13,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
-import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
+import com.gevcorst.popular_movies_in_theaters.Database.AppDatabase;
 import com.gevcorst.popular_movies_in_theaters.Model.Movie;
-import com.gevcorst.popular_movies_in_theaters.Model.TheMovie;
 import com.gevcorst.popular_movies_in_theaters.databinding.ActivityMainBinding;
 import com.gevcorst.popular_movies_in_theaters.viewModel.MainMovieViewModel;
 
@@ -35,15 +30,15 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements ImageAdapter.ListItemClickListener {
 
     private RecyclerView mImageList;
-    private List<TheMovie> movies;
+    private List<com.gevcorst.popular_movies_in_theaters.Model.Movie> movies;
     private ArrayList<Movie> topRateMovies;
     private List<Movie> favoritesMovies;
-    private List<UsersFavorite> mFavoriteMovies;
+    private List<Movie> mFavoriteMovies;
     private final String LOG_MASSAGE = this.getClass().getSimpleName();
     private MainMovieViewModel movieViewModel;
     private boolean isAfavoriteList, getTopRatedMovies;
     private final String BOOLEAN_INSTANCE_STATE_KEY = "isAFovriteKey";
-
+    private AppDatabase db;
     private ActivityMainBinding binding;
 
 
@@ -58,35 +53,10 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         getSupportActionBar().setBackgroundDrawable(
                 new ColorDrawable(getResources().getColor(R.color.colorPrimary,
                         getTheme())));
+        db = AppDatabase.Companion.getInstance(this);
         mImageList = binding.rvNumbers;
+        movieViewModel = new ViewModelProvider(this).get(MainMovieViewModel.class);
 
-        UserFavoriteDataBase userFavoriteDataBase = UserFavoriteDataBase.getInstance(getApplicationContext());
-        movieViewModel =
-                ViewModelProviders.of(this).get(MainMovieViewModel.class);
-
-
-        if (savedInstanceState != null) {
-            boolean[] instanceStateBoolean = savedInstanceState.getBooleanArray(
-                    BOOLEAN_INSTANCE_STATE_KEY);
-            isAfavoriteList = instanceStateBoolean[0];
-            getTopRatedMovies = instanceStateBoolean[1];
-            if (isAfavoriteList && getTopRatedMovies) {
-                setUpTopRatedViewModel();
-               // setUpFavoriteMovieViewModel();
-            }
-            if (isAfavoriteList && !getTopRatedMovies) {
-                observePopularMovies();
-                //setUpFavoriteMovieViewModel();
-            }
-            if (getTopRatedMovies && !isAfavoriteList) {
-                setUpTopRatedViewModel();
-            }
-            if(!isAfavoriteList && !getTopRatedMovies){
-                observePopularMovies();
-            }
-        } else {
-            observePopularMovies();
-        }
 
     }
 
@@ -94,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
      * The method sets up the RecyclerView Adapter class
      * @param movies.
      */
-    private void setupAdapter(List<TheMovie> movies) {
+    private void setupAdapter(List<com.gevcorst.popular_movies_in_theaters.Model.Movie> movies) {
         ImageAdapter mAdapter = new ImageAdapter(movies.size(), this,
                 movies, getApplicationContext());
 
@@ -110,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
     @SuppressWarnings("JavaDoc")
     @Override
     public void onListItemClick(int clickedItemIndex) {
-        TheMovie movie = movies.get(clickedItemIndex);
+        com.gevcorst.popular_movies_in_theaters.Model.Movie movie = movies.get(clickedItemIndex);
         Bundle bundle = new Bundle();
         bundle.putParcelable("MOVIE_KEY", movie);
         Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
@@ -132,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
         return (activeNetwork != null && activeNetwork.isConnected());
     }
 
-    private void observePopularMovies() {
-            movieViewModel.getPlayingNow() .observe(this, latestMovies -> {
+    private void observeMoviesList() {
+            movieViewModel.getMovieList() .observe(this, latestMovies -> {
                 movies =  latestMovies;
                 Log.i("SetUp",latestMovies.toString());
                 setupAdapter(movies);
@@ -141,37 +111,7 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
 
     }
 
-    private void setUpTopRatedViewModel() {
-       /* if (movies == null && !isNetworkAvailable()) {
-            Toast toast =
-                    Toast.makeText(getApplicationContext(),
-                            "No INTERNET connection!", Toast.LENGTH_LONG);
-            toast.show();
-        } else {
-            movieViewModel.getTopRatedMovieList() .observe(this, latestMovies -> {
-                movies =  latestMovies;
-                setupAdapter(movies);
-            });
 
-        }*/
-
-    }
-
-   /* private void setUpFavoriteMovieViewModel() {
-        movieViewModel.getFavoriteList().observe(this, usersFavorites -> {
-            favoritesMovies = new ArrayList<>();
-            for (int i = 0; i < usersFavorites.size(); i++) {
-                String movieTitle = usersFavorites.get(i).getMoveTitle();
-                movies.stream()
-                        .filter(m -> m.getOriginalTitle().equals(movieTitle)).findAny().ifPresent(favMovie -> favoritesMovies.add(favMovie));
-
-            }
-            movies = (ArrayList<Movie>) favoritesMovies;
-            setupAdapter(movies);
-
-
-        });
-    }*/
 
     /**
      * This method creates menu items in the app toolbar
@@ -198,22 +138,15 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.sortByRating) {
-            // action with ID sortByRating was selected
-            getTopRatedMovies = true;
-            isAfavoriteList = false;
-            setUpTopRatedViewModel();
-            //movies.sort(Movie.movieRatingComparator);
-            setupAdapter(movies);
+           movieViewModel.fetchTopRatedMovies();
         } else if (id == R.id.sortByPopularity) {
-            getTopRatedMovies = false;
-            isAfavoriteList = false;
-            observePopularMovies();
-            // movies.sort(Movie.moviePopularityComparator);
-            setupAdapter(movies);
+           movieViewModel.fetchPopularMovies();
         } else if (id == R.id.sortByFavorite) {
-            isAfavoriteList = true;
-           // setUpFavoriteMovieViewModel();
-        } else {
+            movieViewModel.fetchUserFavorites(db);
+        }  else if(id == R.id.sortByPlayingNow){
+            movieViewModel.fetchPlayingNow();
+        }
+        else {
 
         }
         return true;
@@ -231,9 +164,6 @@ public class MainActivity extends AppCompatActivity implements ImageAdapter.List
     @Override
     public void onResume() {
         super.onResume();
-        observePopularMovies();
-
+        observeMoviesList();
     }
-
-
 }

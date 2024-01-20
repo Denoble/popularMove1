@@ -12,9 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gevcorst.popular_movies_in_theaters.Model.Movie;
-import com.gevcorst.popular_movies_in_theaters.Model.TheMovie;
 import com.gevcorst.popular_movies_in_theaters.Utilities.ImageLoader;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -28,10 +26,10 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
     final private ListItemClickListener mOnClickListener;
     private static int viewHolderCount;
     private final Context mContext;
-    private final List<TheMovie> mMovieList;
+    private final List<Movie> mMovieList;
 
 
-    public ImageAdapter(int numberOfItems, ListItemClickListener listener, List<TheMovie> list, Context mContext) {
+    public ImageAdapter(int numberOfItems, ListItemClickListener listener, List<Movie> list, Context mContext) {
         mOnClickListener = listener;
         viewHolderCount = 0;
        mMovieList = list;
@@ -61,7 +59,7 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder imageViewHolder, int position) {
-        TheMovie movie = mMovieList.get(position);
+        Movie movie = mMovieList.get(position);
         imageViewHolder.bind(movie, imageViewHolder.imageView);
 
     }
@@ -109,7 +107,7 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
          * @param movie Movie which its Thumbnail will be displayed in the imageView
          * @param imageView The imageView which holds the movie's Thumbnail
          */
-        void bind(TheMovie movie, ImageView imageView) {
+        void bind(Movie movie, ImageView imageView) {
             String mImageUrl = "http://image.tmdb.org/t/p/";
             String mImageSize = "w500/";
             String completeImageUrl = mImageUrl +

@@ -5,8 +5,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.GridLayoutManager
-import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase
+import com.gevcorst.popular_movies_in_theaters.Database.AppDatabase
 import com.gevcorst.popular_movies_in_theaters.databinding.ActivityMainBinding
 import com.gevcorst.popular_movies_in_theaters.viewModel.MainMovieViewModel
 
@@ -21,7 +20,7 @@ class MainActivity2 : AppCompatActivity(){
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userFavoriteDataBase = UserFavoriteDataBase.getInstance(
+        val userFavoriteDataBase = AppDatabase.getInstance(
             applicationContext
         )
 
@@ -34,7 +33,7 @@ class MainActivity2 : AppCompatActivity(){
     }
     override fun onResume() {
         super.onResume()
-        mainViewModel.popularMovieList.observe(this, Observer {
+        mainViewModel.movieList.observe(this, Observer {
            // binding.rvNumbers.adapter = ImageAdapter(it)
         })
     }

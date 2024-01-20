@@ -5,32 +5,34 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite
+import com.gevcorst.popular_movies_in_theaters.Database.AppDatabase
 import com.gevcorst.popular_movies_in_theaters.Model.MovieReview
-import com.gevcorst.popular_movies_in_theaters.Model.Review
-import com.gevcorst.popular_movies_in_theaters.Model.TheMovie
+import com.gevcorst.popular_movies_in_theaters.Model.Movie
 import com.gevcorst.popular_movies_in_theaters.Model.Videos
 import com.gevcorst.popular_movies_in_theaters.repository.services.MovieRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 class MainMovieViewModel(
     val repository: MovieRepository
     = MovieRepository()
 ) : ViewModel() {
-    private val _popularMovieList = MutableLiveData<List<TheMovie>>()
-    val popularMovieList:LiveData<List<TheMovie>> = _popularMovieList
-    private val _topRatedMovieList =  MutableLiveData<List<TheMovie>>()
-    val topRatedMovieList:LiveData<List<TheMovie>> = _topRatedMovieList
-    private val _favoriteMovieList = MutableLiveData<List<UsersFavorite>>()
-    val favoriteList: LiveData<List<UsersFavorite>> = _favoriteMovieList
+    private val _movieList = MutableLiveData<List<Movie>>()
+    val movieList: LiveData<List<Movie>> = _movieList
     private val _videos = MutableLiveData<Videos>()
-    val videos:LiveData<Videos> = _videos
+    val videos: LiveData<Videos> = _videos
     private val _reviews = MutableLiveData<List<MovieReview>>()
-    val reviews:LiveData<List<MovieReview>> = _reviews
-    private val _playingNow = MutableLiveData<List<TheMovie>>()
-    val playingNow:LiveData<List<TheMovie>> = _playingNow
-    private val _upcomingMovies = MutableLiveData<List<TheMovie>>()
-    val upcomingMovies:LiveData<List<TheMovie>> = _upcomingMovies
+    val reviews: LiveData<List<MovieReview>> = _reviews
+    private val _playingNow = MutableLiveData<List<Movie>>()
+    val playingNow: LiveData<List<Movie>> = _playingNow
+    private val _upcomingMovies = MutableLiveData<List<Movie>>()
+    private val _favoriteState = MutableLiveData<Boolean>()
+    val favoriteState: LiveData<Boolean> = _favoriteState
+
+    val upcomingMovies: LiveData<List<Movie>> = _upcomingMovies
+
     init {
         fetchPopularMovies()
         fetchPlayingNow()
@@ -42,8 +44,8 @@ class MainMovieViewModel(
         viewModelScope.launch {
             try {
                 repository.getMoviesPlayingNow().collect {
-                    _playingNow.value = it.theMovieDbResults
-                    Log.i("MainMovieViewModel", it.theMovieDbResults.toString())
+                    _movieList.value = it.movieDbResults
+                    Log.i("MainMovieViewModel", it.movieDbResults.toString())
                 }
             } catch (e: Exception) {
                 Log.i("MainMovieViewModel Error", e.stackTraceToString())
@@ -57,9 +59,9 @@ class MainMovieViewModel(
         viewModelScope.launch {
             try {
                 repository.getPopularMovies().collect {
-                    _popularMovieList.value = it.theMovieDbResults
-                    Log.i("MainMovieViewModel", it.theMovieDbResults.toString())
-                   fetchVideos( it.theMovieDbResults[0].id)
+                    _movieList.value = it.movieDbResults
+                    Log.i("MainMovieViewModel", it.movieDbResults.toString())
+                    fetchVideos(it.movieDbResults[0].movieId)
                 }
             } catch (e: Exception) {
                 Log.i("MainMovieViewModel Error", e.stackTraceToString())
@@ -67,53 +69,130 @@ class MainMovieViewModel(
 
         }
     }
-    fun fetchUpComingMovies(){
+
+    fun fetchUpComingMovies() {
         viewModelScope.launch {
             try {
-                repository.getUpComingMovies().collect{
+                repository.getUpComingMovies().collect {
                     _upcomingMovies.value = it
                 }
 
-            }catch (e:Exception){
+            } catch (e: Exception) {
 
             }
         }
     }
-    fun fetchTopRatedMovies(){
+
+    fun fetchUserFavorites(db: AppDatabase) {
         viewModelScope.launch {
             try {
-                repository.getTopRatedMovies().collect{
-                    _topRatedMovieList.value = it.theMovieDbResults
-                    Log.i("MainMovieViewModel", it.theMovieDbResults.toString())
+                val tempList = flow{
+                    val favorites = db.userFavObjectDao().loadAllTasks()
+                    emit(favorites)
                 }
-            }catch (e: Exception) {
+                tempList.collect{
+                   _movieList.value = it
+                    Log.i("Favorites", it.toString())
+                }
+            } catch (e: Exception) {
+                Log.i("Favorites", e.stackTraceToString())
+            }
+        }
+
+    }
+
+    fun fetchTopRatedMovies() {
+        viewModelScope.launch {
+            try {
+                repository.getTopRatedMovies().collect {
+                    _movieList.value = it.movieDbResults
+                    Log.i("MainMovieViewModel", it.movieDbResults.toString())
+                }
+            } catch (e: Exception) {
                 Log.i("MainMovieViewModel Error", e.stackTraceToString())
             }
         }
     }
-    fun fetchReviews(id:Int){
+
+    fun fetchReviews(id: Int) {
         viewModelScope.launch {
             try {
-                repository.getReviews(id).collect{
+                repository.getReviews(id).collect {
                     _reviews.value = it.movieReviews
                     Log.i("MovieReviews", it.toString())
                 }
 
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 Log.i("MainMovieViewModel Error", e.stackTraceToString())
             }
         }
     }
-    fun fetchVideos(id: Int){
+
+    fun fetchVideos(id: Int) {
         viewModelScope.launch {
             try {
-                repository.getVideos (id).collect{
+                repository.getVideos(id).collect {
                     _videos.value = it
                     Log.i("MovieVideos", it.toString())
                 }
 
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 Log.i("MainMovieViewModel Error", e.stackTraceToString())
+            }
+        }
+    }
+
+    fun checkIsFaveMovie(db: AppDatabase, id: Int) {
+        viewModelScope.launch {
+            try {
+                val tempValue = flow {
+                    val result = db.userFavObjectDao().loadFavoriteById(id)
+                    if(result == null){
+                       emit(false)
+                    }else{
+                        emit(true)}
+                }.flowOn(Dispatchers.IO)
+                tempValue.collect {
+                            _favoriteState.value = it
+                            Log.i("LoadingFave", it.toString())
+                    }
+
+            } catch (e: Exception) {
+                _favoriteState.value = false
+                Log.i("LoadingFaveError", e.stackTraceToString())
+            }
+        }
+    }
+
+    fun removeFromFavorite(movie: Movie, db: AppDatabase) {
+        viewModelScope.launch {
+            try {
+                val isFave = flow{
+                    db.userFavObjectDao().deleteById(movie.movieId)
+                    emit(false)
+                }.flowOn(Dispatchers.IO)
+                isFave.collect{
+                    _favoriteState.value = it
+                    Log.i("MovieDB", "Removed Successfully ${_favoriteState.value}")
+                }
+            } catch (e: Exception) {
+                Log.i("MovieDB", e.stackTraceToString())
+            }
+        }
+    }
+
+    fun addToFavorite(movie: Movie, db: AppDatabase) {
+        viewModelScope.launch {
+            try {
+                val isFave = flow{
+                    db.userFavObjectDao().insertFavorite(movie)
+                    emit(true)
+                }.flowOn(Dispatchers.IO)
+                isFave.collect{
+                    _favoriteState.value = it
+                }
+            } catch (e: Exception) {
+                Log.i("MovieDB", e.stackTraceToString())
             }
         }
     }

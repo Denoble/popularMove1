@@ -4,57 +4,86 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.gevcorst.popular_movies_in_theaters.Database.UserFavoriteDataBase;
-import com.gevcorst.popular_movies_in_theaters.Database.UsersFavorite;
-import com.gevcorst.popular_movies_in_theaters.viewModel.MovieViewModel;
+import com.gevcorst.popular_movies_in_theaters.Database.AppDatabase;
+import com.gevcorst.popular_movies_in_theaters.Model.Movie;
 import com.gevcorst.popular_movies_in_theaters.Model.MovieReview;
-import com.gevcorst.popular_movies_in_theaters.Model.TheMovie;
 import com.gevcorst.popular_movies_in_theaters.Utilities.ImageLoader;
 import com.gevcorst.popular_movies_in_theaters.Utilities.JsonUtil;
 import com.gevcorst.popular_movies_in_theaters.databinding.ActivityDetailBinding;
 import com.gevcorst.popular_movies_in_theaters.viewModel.MainMovieViewModel;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class DetailActivity extends AppCompatActivity {
-    private TheMovie movie;
-    private UserFavoriteDataBase mFavoriteMovies;
+    final String favoriteTextViewText = "MARK AS FAVORITE";
+    final String favoriteTextViewText2 = "REMOVE AS A FAVORITE";
+    private com.gevcorst.popular_movies_in_theaters.Model.Movie movie;
+    private AppDatabase db;
     private TextView mReviewList;
-    private MovieViewModel movieViewModel;
     private List<MovieReview> mReviews;
-    private boolean isAFavorite;
     private MainMovieViewModel mainMovieViewModel;
     private ActivityDetailBinding binding;
+    private Boolean isAFavorite = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        mainMovieViewModel = ViewModelProviders.of(
-                this).get(MainMovieViewModel.class);
+        mainMovieViewModel = new ViewModelProvider(this).get(MainMovieViewModel.class);
+        db = AppDatabase.Companion.getInstance(this);
 
     }
 
-    /**
-     * Find views in the activity_layout
-     * to be used in DetailActivity class
-     */
-    /**
-     * Sets Data to the DetailActivity views
-     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setViewsData();
+        mainMovieViewModel.fetchReviews(movie.getMovieId());
+        mainMovieViewModel.fetchVideos(movie.getMovieId());
+        mainMovieViewModel.checkIsFaveMovie(db,movie.getMovieId());
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        observeFavoriteState();
+        setUpMovieTrailer();
+        setMovieReviews();
+        binding.tumbnail.favoriteButton.setOnClickListener(view -> {
+            Log.i("IsFave",isAFavorite.toString());
+            if (!isAFavorite) {
+                addToFavoriteMovies(movie);
+
+            } else {
+                removeFromFavoriteMovies(movie);
+            }
+        });
+
+    }
+
+    private void removeFaveIcon() {
+        binding.tumbnail.tvForFavorite.setText(favoriteTextViewText);
+        binding.tumbnail.favoriteButton.setBackgroundResource(
+                R.drawable.favorite_boarder);
+    }
+
+    private void addFavoriteIcon() {
+        binding.tumbnail.tvForFavorite.setText(favoriteTextViewText2);
+        binding.tumbnail.favoriteButton.setBackgroundResource(
+                R.drawable.ic_favorite_black_48dp);
+    }
 
     private void setViewsData() {
         Intent intent = getIntent();
@@ -62,9 +91,6 @@ public class DetailActivity extends AppCompatActivity {
         if (bundle != null) {
             movie = bundle.getParcelable("MOVIE_KEY");
         }
-        movieViewModel =
-                ViewModelProviders.of(this).get(MovieViewModel.class);
-
         String mImageUrl = "http://image.tmdb.org/t/p/";
         String mImageSize = "w342/";
         String completeImageUrl = mImageUrl +
@@ -111,48 +137,21 @@ public class DetailActivity extends AppCompatActivity {
     }
 
 
-    private void monitorFavoriteInDataBase() {
-        movieViewModel.getFavoriteList().observe(this, new Observer<List<UsersFavorite>>() {
-            final String favoriteTextViewText = "MARK AS FAVORITE";
-            final String favoriteTextViewText2 = "REMOVE AS A FAVORITE";
-
-            @Override
-            public void onChanged(@Nullable List<UsersFavorite> usersFavorites) {
-                assert usersFavorites != null;
-                UsersFavorite usersFavorite = usersFavorites.stream()
-                        .filter(u -> u.getMovieId() == movie.getId()).findAny().orElse(null);
-                if (usersFavorite == null) {
-                    isAFavorite = false;
-                    binding.tumbnail.tvForFavorite.setText(favoriteTextViewText);
-                    binding.tumbnail.favoriteButton.setBackgroundResource(R.drawable.favorite_boarder);
-                } else {
-                    isAFavorite = true;
-                    binding.tumbnail.tvForFavorite.setText(favoriteTextViewText2);
-                    binding.tumbnail.favoriteButton.setBackgroundResource(R.drawable.ic_favorite_black_48dp);
-                }
-                binding.tumbnail.favoriteButton.setOnClickListener(view -> {
-                    if (isAFavorite) {
-                        removeFromFavoriteMovies(movie.getId());
-                    } else {
-                        addToFavoriteMovies();
-                    }
-                });
-            }
-        });
+    private void addToFavoriteMovies(Movie movie) {
+        try{
+            mainMovieViewModel.addToFavorite(movie,db);
+            Log.i("AddsToDb", "Movie Added");
+        }catch (Exception e){
+            Log.i("AddsToDb", Arrays.toString(e.getStackTrace()));
+        }
     }
 
-    private void addToFavoriteMovies() {
-        final UsersFavorite usersFavorite = new UsersFavorite(movie.getOriginalTitle(),
-                movie.getId());
-        AppExecutors.getInstance()
-                .diskIO()
-                .execute(() -> mFavoriteMovies.favoriteDao().insertFavorite(usersFavorite));
-    }
-
-    private void removeFromFavoriteMovies(int movieId) {
-        AppExecutors.getInstance()
-                .diskIO()
-                .execute(() -> mFavoriteMovies.favoriteDao().deleteById(movieId));
+    private void removeFromFavoriteMovies(Movie movie) {
+        try{
+            mainMovieViewModel.removeFromFavorite(movie,db);
+        }catch (Exception e){
+            Log.i("AddsToDb", Arrays.toString(e.getStackTrace()));
+        }
     }
 
     private void playTrailer(View view, String youTubeUrl) {
@@ -190,22 +189,18 @@ public class DetailActivity extends AppCompatActivity {
         return alertDialog;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setUpMovieTrailer();
-        setMovieReviews();
-        monitorFavoriteInDataBase();
 
-
+    private void observeFavoriteState() {
+        mainMovieViewModel.getFavoriteState().observe(this, favState -> {
+            isAFavorite = favState;
+            if(isAFavorite){
+                addFavoriteIcon();
+            }
+            else {
+                removeFaveIcon();
+            }
+        });
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mFavoriteMovies = UserFavoriteDataBase.getInstance(getApplicationContext());
-        setViewsData();
-        mainMovieViewModel.fetchReviews(movie.getId());
-        mainMovieViewModel.fetchVideos(movie.getId());
-    }
+
 }
