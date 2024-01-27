@@ -7,6 +7,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.gevcorst.popular_movies_in_theaters.R
 
 object ImageLoader{
+    @JvmStatic
     fun bindImage(imgView: ImageView, imgUrl: String?) {
         imgUrl?.let {
             val glideImgUrl = it.toUri().buildUpon().scheme("https").build()

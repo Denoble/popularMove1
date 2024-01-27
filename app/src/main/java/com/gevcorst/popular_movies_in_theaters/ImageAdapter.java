@@ -17,7 +17,6 @@ import com.gevcorst.popular_movies_in_theaters.Utilities.ImageLoader;
 import java.util.List;
 
 public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
-
     private static final String TAG = ImageAdapter.class.getSimpleName();
     /*
      * An on-click handler that makes it easy for an Activity to interface with
@@ -89,7 +88,7 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
         ViewHolder(View itemView){
             super(itemView);
             this.context =  mContext;
-            imageView = itemView.findViewById(R.id.imageId);
+            imageView = itemView.findViewById(R.id.item_imageId);
            // textView = (TextView)itemView.findViewById(R.id.tvId);
             itemView.setOnClickListener(this);
         }
@@ -113,7 +112,7 @@ public class ImageAdapter  extends RecyclerView.Adapter<ImageAdapter.ViewHolder>
             String completeImageUrl = mImageUrl +
                     mImageSize +
                     movie.getPosterPath();
-            ImageLoader.INSTANCE.bindImage(imageView,completeImageUrl);
+            ImageLoader.bindImage(imageView,completeImageUrl);
             //Picasso.get().load(completeImageUrl).into(imageView);
 
         }

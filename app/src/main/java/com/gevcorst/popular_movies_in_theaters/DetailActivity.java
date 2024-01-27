@@ -47,7 +47,7 @@ public class DetailActivity extends AppCompatActivity {
         binding = ActivityDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         mainMovieViewModel = new ViewModelProvider(this).get(MainMovieViewModel.class);
-        db = AppDatabase.Companion.getInstance(this);
+        db = AppDatabase.getInstance(this);
     }
 
     @Override

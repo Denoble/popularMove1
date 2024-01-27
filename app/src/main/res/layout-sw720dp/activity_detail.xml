@@ -50,13 +50,13 @@
             android:layout_width="5dp"
             android:layout_height="0dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
             android:background="@color/colorDivider"
             android:contentDescription="@string/detailViewThumbnail_Description"
-            app:layout_constraintBottom_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tumbnail"
-            />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/guideline"
+
+            app:layout_constraintTop_toTopOf="parent" />
 
         <include
             android:id="@+id/trailer"

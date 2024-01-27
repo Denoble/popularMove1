@@ -32,6 +32,7 @@ interface UserFaveDAO {
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     companion object {
+        @JvmStatic
         fun getInstance(appcontext: Context): AppDatabase {
             return Room.databaseBuilder(
                 appcontext,

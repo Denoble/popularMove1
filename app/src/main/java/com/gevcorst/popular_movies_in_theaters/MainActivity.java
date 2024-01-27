@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        db = AppDatabase.Companion.getInstance(this);
+        db = AppDatabase.getInstance(this);
         mImageList = binding.rvNumbers;
         movieViewModel = new ViewModelProvider(this).get(MainMovieViewModel.class);
         observeLastVisitedList();

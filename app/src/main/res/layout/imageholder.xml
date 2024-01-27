@@ -16,7 +16,7 @@
         app:cardPreventCornerOverlap="true"
         app:cardUseCompatPadding="true">
         <ImageView
-            android:id="@+id/imageId"
+            android:id="@+id/item_imageId"
             android:contentDescription="@string/todo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
