@@ -47,7 +47,7 @@ object CustomAlertDialog{
                 AlertDialog.BUTTON_NEGATIVE
             ).setTextColor(
                 context.resources.getColor(
-                    R.color.ivory_white,
+                    R.color.colorAccent,
                     context.theme
                 )
             )
