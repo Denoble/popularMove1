@@ -85,8 +85,12 @@ class MainMovieViewModel(
                     emit(favorites)
                 }.flowOn(Dispatchers.IO)
                 tempList.collect {
-                    _movieList.value = it
-                    Log.i("Favorites", it.toString())
+                    if(it.size > 0){
+                        _movieList.value = it
+                        Log.i("Favorites", it.toString())
+                    }else{
+                        fetchPlayingNow()
+                    }
                 }
             } catch (e: Exception) {
                 Log.i("Favorites", e.stackTraceToString())

@@ -52,12 +52,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
+        observeMoviesList();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        observeMoviesList();
     }
 
     @Override

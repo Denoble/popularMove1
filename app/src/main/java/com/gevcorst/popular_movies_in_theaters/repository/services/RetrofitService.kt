@@ -14,6 +14,7 @@ import okhttp3.CacheControl
 import okhttp3.Interceptor
 import okhttp3.Interceptor.*
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -24,7 +25,7 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 
 
-private const val BASE_URL = "http://api.themoviedb.org/"
+private const val BASE_URL = "https://api.themoviedb.org/"
 private const val CACHE_SIZE = 5 * 1024 * 1024L
 private const val HEADER_CACHE_CONTROL = "cache-control"
 private const val NO_CACHE_CONTROL = "no-cache"
@@ -46,9 +47,17 @@ class OAuthAndCacheInterceptor(
 ) : Interceptor {
     override fun intercept(chain: Chain): okhttp3.Response {
         var request = chain.request()
-        if(request.header("No-Authentication")==null){
-            request = request.newBuilder().addHeader("Authorization",
-                "$tokenType $acceessToken")
+        if (request.header("No-Authentication") == null) {
+            request = request.newBuilder()
+                .addHeader(
+                "Authorization",
+                "$tokenType $acceessToken"
+            ).addHeader("X-Android-Package",
+                "com.gevcorst.popular_movies_in_theaters")
+                .addHeader(
+                    "X-Android-Cert",
+                    BuildConfig.GOOGLE_PLAY_FINGERPRINT
+                )
                 .build()
         }
         val useCacheData = request.header(HEADER_CACHE_CONTROL) != NO_CACHE_CONTROL
@@ -60,10 +69,14 @@ class OAuthAndCacheInterceptor(
                 .maxAge(10, TimeUnit.MINUTES)
             initialResponse.newBuilder()
                 .header("Authorization", "$tokenType $acceessToken")
+                .header("X-Android-Package",
+                    "com.gevcorst.popular_movies_in_theaters")
+                .header( "X-Android-Cert",
+                    BuildConfig.GOOGLE_PLAY_FINGERPRINT)
                 .header(HEADER_CACHE_CONTROL, cacheControl.toString())
                 .build()
         }
-       //return chain.proceed(request)
+        //return chain.proceed(request)
     }
 }
 
@@ -74,7 +87,7 @@ private fun okhttpClient(): OkHttpClient {
     return OkHttpClient.Builder()
         .addInterceptor(
             OAuthAndCacheInterceptor(
-                "Bearer ",
+                "Bearer",
                 BuildConfig.THEMOVIEDB_BEARER
             )
         )
@@ -87,34 +100,51 @@ private fun httpCache(): Cache {
     return Cache(cacheDirectory, CACHE_SIZE)
 }
 
+
 private fun loggingInterceptor() = HttpLoggingInterceptor().apply {
     level = HttpLoggingInterceptor.Level.HEADERS
 }
 
 interface MovieDBService {
     @GET("3/movie/popular")
-    fun getPopularMovie(@Query("language")lan:String = "en-US",
-                     @Query("page")page:String ="10"): Deferred<MovieData>
-    @GET("3/movie/now_playing")
-    fun getNowPlaying(@Query("language")lan:String = "en-US",
-                      @Query("page")page:String ="1"):Deferred<MovieData>
-    @GET("3/movie/top_rated")
-    fun getTopRated(@Query("language")lan:String = "en-US",
-                    @Query("page")page:String ="1"):Deferred<MovieData>
-    @GET("3/movie/upcoming")
-    fun getUpcoming(@Query("language")lan:String = "en-US",
-                    @Query("page")page:String ="1"):Deferred<MovieData>
+    fun getPopularMovie(
+        @Query("language") lan: String = "en-US",
+        @Query("page") page: String = "10",
+    ): Deferred<MovieData>
 
-    @GET("3/movie/{movie_id}/reviews" )
-    fun getReviews(@Path("movie_id")id:Int,
-                   @Query("language")lan:String = "en-US"):Deferred<Review>
+    @GET("3/movie/now_playing")
+    fun getNowPlaying(
+        @Query("language") lan: String = "en-US",
+        @Query("page") page: String = "1",
+    ): Deferred<MovieData>
+
+    @GET("3/movie/top_rated")
+    fun getTopRated(
+        @Query("language") lan: String = "en-US",
+        @Query("page") page: String = "1",
+    ): Deferred<MovieData>
+
+    @GET("3/movie/upcoming")
+    fun getUpcoming(
+        @Query("language") lan: String = "en-US",
+        @Query("page") page: String = "1",
+    ): Deferred<MovieData>
+
+    @GET("3/movie/{movie_id}/reviews")
+    fun getReviews(
+        @Path("movie_id") id: Int,
+        @Query("language") lan: String = "en-US",
+    ): Deferred<Review>
+
     @GET("3/movie/{movie_id}/videos")
     fun getVideos(
-        @Path("movie_id")id:Int,
-        @Query("language")lan:String = "en-US"):Deferred<Videos>
+        @Path("movie_id") id: Int,
+        @Query("language") lan: String = "en-US",
+    ): Deferred<Videos>
 }
-object MovieDbRESTService{
-    val movieDBObject:MovieDBService by lazy {
+
+object MovieDbRESTService {
+    val movieDBObject: MovieDBService by lazy {
         retrofit.create(MovieDBService::class.java)
     }
 }

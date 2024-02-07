@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.gevcorst.popular_movies_in_theaters.Database.AppDatabase;
 import com.gevcorst.popular_movies_in_theaters.Model.Movie;
 import com.gevcorst.popular_movies_in_theaters.Model.MovieReview;
+import com.gevcorst.popular_movies_in_theaters.Utilities.CustomAlertDialog;
 import com.gevcorst.popular_movies_in_theaters.Utilities.ImageLoader;
 import com.gevcorst.popular_movies_in_theaters.Utilities.JsonUtil;
 import com.gevcorst.popular_movies_in_theaters.databinding.ActivityDetailBinding;
@@ -116,22 +117,29 @@ public class DetailActivity extends AppCompatActivity {
     private void setUpMovieTrailer() {
         mainMovieViewModel.getVideos().observe(this, videos -> {
             binding.trailer.videoView.setOnClickListener(view -> {
-                String youtubeUrl = videos.getResults().get(0).getKey();
-                ;
-                Log.i("YouTube", youtubeUrl);
-                playTrailer(binding.trailer.videoView,
-                        JsonUtil.YOUTUBE_URL + youtubeUrl);
+                if(videos.getResults().size() > 0){
+                    String youtubeUrl = videos.getResults().get(0).getKey();
+                    ;
+                    Log.i("YouTube", youtubeUrl);
+                    playTrailer(binding.trailer.videoView,
+                            JsonUtil.YOUTUBE_URL + youtubeUrl);
+                }
             });
             binding.trailer.videoView2.setOnClickListener(view -> {
-                String youtubeUrl = videos.getResults().get(1).getKey();
-                if (youtubeUrl == null) {
-                    binding.trailer.videoView2.setVisibility(View.GONE);
-                    Toast toast = Toast.makeText(getApplicationContext(), "No trailer link available",
-                            Toast.LENGTH_LONG);
-                    toast.show();
-                } else {
-                    playTrailer(binding.trailer.videoView2,
-                            JsonUtil.YOUTUBE_URL + youtubeUrl);
+                if(videos.getResults().size() > 1){
+                    String youtubeUrl = videos.getResults().get(1).getKey();
+                    if (youtubeUrl == null) {
+                        binding.trailer.videoView2.setVisibility(View.GONE);
+                        Toast toast = Toast.makeText(getApplicationContext(), "No trailer link available",
+                                Toast.LENGTH_LONG);
+                        toast.show();
+                    } else {
+                        playTrailer(binding.trailer.videoView2,
+                                JsonUtil.YOUTUBE_URL + youtubeUrl);
+                    }
+                }else{
+                    CustomAlertDialog.showAlertDialog(this,"Error !",
+                            "Youtube link unavailable" );
                 }
             });
         });

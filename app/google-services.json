@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "566563043162",
+    "project_id": "gevcorst-movies",
+    "storage_bucket": "gevcorst-movies.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:566563043162:android:3fb1fb3b075400ab242563",
+        "android_client_info": {
+          "package_name": "com.gevcorst.popular_movies_in_theaters"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMNMcT7qk9RGb-wzsYkkCt2uYlf-nkzMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

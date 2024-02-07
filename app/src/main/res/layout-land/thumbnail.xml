@@ -106,10 +106,10 @@
         android:id="@+id/favoriteButton"
         android:layout_width="25dp"
         android:layout_height="30dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/favorite_boarder"
         android:contentDescription="@string/favorite_vote_button"
-        app:layout_constraintStart_toEndOf="@+id/tv_forFavorite"
+        app:layout_constraintStart_toStartOf="@+id/tv_forFavorite"
         app:layout_constraintTop_toBottomOf="@+id/tv_forDuration" />
 
     <androidx.constraintlayout.widget.Guideline
