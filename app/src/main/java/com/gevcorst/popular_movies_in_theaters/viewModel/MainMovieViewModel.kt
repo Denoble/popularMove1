@@ -30,6 +30,11 @@ class MainMovieViewModel(
     val lastViewedList: LiveData<MenuOptions> = _lastViewList
     private val _favoriteState = MutableLiveData<Boolean>()
     val favoriteState: LiveData<Boolean> = _favoriteState
+    private val _isFavoriteEmpty = MutableLiveData<Boolean>()
+    val isFavoriteEmpty: LiveData<Boolean> = _isFavoriteEmpty
+    private val _screenTitle = MutableLiveData<String>()
+    val screenTitle:LiveData<String> = _screenTitle
+
 
     init {
         fetchPlayingNow()
@@ -40,6 +45,7 @@ class MainMovieViewModel(
             try {
                 repository.getMoviesPlayingNow().collect {
                     _movieList.value = it.movieDbResults
+                    _screenTitle.value = MenuOptions.NowPLAYING.screenTile
                     Log.i("MainMovieViewModel", it.movieDbResults.toString())
                 }
             } catch (e: Exception) {
@@ -55,6 +61,7 @@ class MainMovieViewModel(
             try {
                 repository.getPopularMovies().collect {
                     _movieList.value = it.movieDbResults
+                    _screenTitle.value = MenuOptions.POPULAR.screenTile
                     Log.i("MainMovieViewModel", it.movieDbResults.toString())
                 }
             } catch (e: Exception) {
@@ -69,6 +76,7 @@ class MainMovieViewModel(
             try {
                 repository.getUpComingMovies().collect {
                     _movieList.value = it
+                    _screenTitle.value = MenuOptions.UPCOMING.screenTile
                 }
 
             } catch (e: Exception) {
@@ -85,11 +93,13 @@ class MainMovieViewModel(
                     emit(favorites)
                 }.flowOn(Dispatchers.IO)
                 tempList.collect {
-                    if(it.size > 0){
+                    if (it.isNotEmpty()) {
                         _movieList.value = it
+                        _isFavoriteEmpty.value = false
+                        _screenTitle.value = MenuOptions.FAVORITE.screenTile
                         Log.i("Favorites", it.toString())
-                    }else{
-                        fetchPlayingNow()
+                    } else {
+                        _isFavoriteEmpty.value = true
                     }
                 }
             } catch (e: Exception) {
@@ -104,6 +114,7 @@ class MainMovieViewModel(
             try {
                 repository.getTopRatedMovies().collect {
                     _movieList.value = it.movieDbResults
+                    _screenTitle.value = MenuOptions.TOP_RATING .screenTile
                     Log.i("MainMovieViewModel", it.movieDbResults.toString())
                 }
             } catch (e: Exception) {
@@ -194,6 +205,10 @@ class MainMovieViewModel(
                 Log.i("MovieDB", e.stackTraceToString())
             }
         }
+    }
+
+    fun updateIsFaveEmpty(isEmpty: Boolean) {
+        _isFavoriteEmpty.value = isEmpty
     }
 
     fun updateLastVisitedList(type: MenuOptions) {

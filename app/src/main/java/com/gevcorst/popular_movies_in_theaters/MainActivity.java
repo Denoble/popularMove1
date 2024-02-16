@@ -1,11 +1,7 @@
 package com.gevcorst.popular_movies_in_theaters;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import android.os.Bundle;
 
@@ -15,27 +11,28 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.gevcorst.popular_movies_in_theaters.Database.AppDatabase;
 import com.gevcorst.popular_movies_in_theaters.Model.Movie;
+import com.gevcorst.popular_movies_in_theaters.Utilities.CustomAlertDialog;
 import com.gevcorst.popular_movies_in_theaters.Utilities.MenuOptions;
 import com.gevcorst.popular_movies_in_theaters.databinding.ActivityMainBinding;
 import com.gevcorst.popular_movies_in_theaters.viewModel.MainMovieViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements ImageAdapter.ListItemClickListener {
     private RecyclerView mImageList;
     private List<com.gevcorst.popular_movies_in_theaters.Model.Movie> movies;
-    private MainMovieViewModel movieViewModel;
-    private AppDatabase db;
+    static MainMovieViewModel movieViewModel;
+    static AppDatabase db;
     private ActivityMainBinding binding;
+    public boolean isFaveListEmpty;
 
 
     @Override
@@ -135,27 +132,50 @@ public class MainActivity extends AppCompatActivity
         Movie movie = movies.get(clickedItemIndex);
         Bundle bundle = new Bundle();
         bundle.putParcelable("MOVIE_KEY", movie);
-        Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+        Intent intent = new Intent(getApplicationContext(),
+                DetailActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);
     }
+
     private void observeMoviesList() {
         movieViewModel.getMovieList().observe(this, latestMovies -> {
-            if(latestMovies.size() > 0){
+            if (latestMovies.size() > 0) {
                 movies = latestMovies;
                 binding.imageViewLoading.setVisibility(View.GONE);
                 binding.rvNumbers.setVisibility(View.VISIBLE);
                 setupAdapter(movies);
                 Log.i("SetUp", latestMovies.toString());
-            }else{
+            } else {
                 binding.imageViewLoading.setVisibility(View.VISIBLE);
                 binding.rvNumbers.setVisibility(View.GONE);
             }
 
         });
-
+        movieViewModel.isFavoriteEmpty().observe(this, isListEmpty -> {
+            if(isListEmpty){
+               CustomAlertDialog.showAlertDialog(
+                       this,"Empty Favorite List",
+                       "Add Movie to Favourite List by Clicking" +
+                               "the Heart Button on the Detail View",movieViewModel
+               );
+            }
+        });
+        movieViewModel.getScreenTitle().observe(this, screenTitle ->{
+            getSupportActionBar().setTitle(screenTitle);
+        });
     }
 
+    /* private void onBackButtonPress() {
+         this.getOnBackPressedDispatcher().addCallback(this,
+                 new OnBackPressedCallback(true) {
+                     @Override
+                     public void handleOnBackPressed() {
+                         setupAdapter(movies);
+                         Log.i("BackPressed","Back Press !!!");
+                     }
+                 });
+     }*/
     private void observeLastVisitedList() {
         movieViewModel.getLastViewedList().observe(this, option -> {
             switch (option) {

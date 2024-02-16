@@ -1,5 +1,6 @@
 package com.gevcorst.popular_movies_in_theaters.Database
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Dao
 import androidx.room.Database

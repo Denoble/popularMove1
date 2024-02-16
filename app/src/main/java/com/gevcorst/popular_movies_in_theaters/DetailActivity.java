@@ -1,5 +1,6 @@
 package com.gevcorst.popular_movies_in_theaters;
 
+import android.app.Application;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -31,6 +32,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+
 public class DetailActivity extends AppCompatActivity {
     final String favoriteTextViewText = "MARK AS FAVORITE";
     final String favoriteTextViewText2 = "REMOVE AS A FAVORITE";
@@ -47,8 +51,8 @@ public class DetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityDetailBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        mainMovieViewModel = new ViewModelProvider(this).get(MainMovieViewModel.class);
-        db = AppDatabase.getInstance(this);
+        mainMovieViewModel = MainActivity.movieViewModel;
+        db = MainActivity.db;
     }
 
     @Override
@@ -62,7 +66,6 @@ public class DetailActivity extends AppCompatActivity {
         mainMovieViewModel.fetchReviews(movie.getMovieId());
         mainMovieViewModel.fetchVideos(movie.getMovieId());
         mainMovieViewModel.checkIsFaveMovie(db, movie.getMovieId());
-
     }
 
     @Override
@@ -80,6 +83,7 @@ public class DetailActivity extends AppCompatActivity {
                 removeFromFavoriteMovies(movie);
             }
         });
+
 
     }
 
@@ -107,7 +111,7 @@ public class DetailActivity extends AppCompatActivity {
         String completeImageUrl = mImageUrl +
                 mImageSize +
                 movie.getBackdropPath();
-        ImageLoader.INSTANCE.bindImage(binding.tumbnail.ivThumbnail, completeImageUrl);
+        ImageLoader.bindImage(binding.tumbnail.ivThumbnail, completeImageUrl);
         binding.tumbnail.tvDate.setText(movie.getReleaseDate());
         binding.tumbnail.tvRating.setText(String.valueOf(
                 movie.getVoteAverage()));
@@ -119,31 +123,29 @@ public class DetailActivity extends AppCompatActivity {
             binding.trailer.videoView.setOnClickListener(view -> {
                 if(videos.getResults().size() > 0){
                     String youtubeUrl = videos.getResults().get(0).getKey();
-                    ;
                     Log.i("YouTube", youtubeUrl);
                     playTrailer(binding.trailer.videoView,
                             JsonUtil.YOUTUBE_URL + youtubeUrl);
+                }else {
+                    CustomAlertDialog.showAlertDialog(this, "Error !",
+                            "Youtube link unavailable"
+                    );
                 }
             });
             binding.trailer.videoView2.setOnClickListener(view -> {
                 if(videos.getResults().size() > 1){
                     String youtubeUrl = videos.getResults().get(1).getKey();
-                    if (youtubeUrl == null) {
-                        binding.trailer.videoView2.setVisibility(View.GONE);
-                        Toast toast = Toast.makeText(getApplicationContext(), "No trailer link available",
-                                Toast.LENGTH_LONG);
-                        toast.show();
-                    } else {
                         playTrailer(binding.trailer.videoView2,
                                 JsonUtil.YOUTUBE_URL + youtubeUrl);
-                    }
                 }else{
-                    CustomAlertDialog.showAlertDialog(this,"Error !",
-                            "Youtube link unavailable" );
+                    binding.trailer.videoView2.setVisibility(View.GONE);
+                    CustomAlertDialog.showAlertDialog(this, "Error !",
+                            "Youtube link unavailable");
                 }
             });
         });
     }
+
 
     private void setMovieReviews() {
         mainMovieViewModel.getReviews().observe(this, review -> {
@@ -166,6 +168,7 @@ public class DetailActivity extends AppCompatActivity {
     private void removeFromFavoriteMovies(Movie movie) {
         try {
             mainMovieViewModel.removeFromFavorite(movie, db);
+
         } catch (Exception e) {
             Log.i("AddsToDb", Arrays.toString(e.getStackTrace()));
         }
@@ -181,31 +184,12 @@ public class DetailActivity extends AppCompatActivity {
         try {
             startActivity(intent);
         } catch (Exception exception) {
-            AlertDialog.Builder alertDialog = createAlertDiaglog(exception.getMessage());
-            alertDialog.create();
-            alertDialog.setTitle("Error");
-            alertDialog.show();
+            String msg = exception.getMessage()
+                    != null ? exception.getMessage() : "Unknown Error";
+            CustomAlertDialog.showAlertDialog(this, "Error !",
+                    msg);
         }
     }
-
-    private AlertDialog.Builder createAlertDiaglog(String message) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-        alertDialog.setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.cancel();
-                    }
-                })
-           /* .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.cancel();
-                }
-            })*/;
-        return alertDialog;
-    }
-
 
     private void observeFavoriteState() {
         mainMovieViewModel.getFavoriteState().observe(this, favState -> {
