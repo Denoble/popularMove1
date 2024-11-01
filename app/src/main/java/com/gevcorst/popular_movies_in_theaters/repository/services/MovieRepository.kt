@@ -14,8 +14,9 @@ class MovieRepository {
         emit(playingNow)
     }
     suspend fun getPopularMovies():Flow<MovieData> = flow{
-        val popularMovies = MovieDbRESTService.movieDBObject.getPopularMovie().await()
-        emit(popularMovies)
+            val popularMovies = MovieDbRESTService.movieDBObject.getPopularMovie().await()
+            emit(popularMovies)
+
     }
     suspend fun getTopRatedMovies():Flow<MovieData> = flow {
         val topRatedMovies = MovieDbRESTService.movieDBObject.getTopRated().await()
